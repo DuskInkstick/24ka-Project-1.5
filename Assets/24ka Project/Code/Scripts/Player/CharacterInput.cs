@@ -30,6 +30,6 @@ public class CharacterInput : MonoBehaviour
     private void ChangeMovementVector(InputAction.CallbackContext context)
     {
         var value = context.ReadValue<Vector2>();
-        OnMovementVectorChanged(value);
+        OnMovementVectorChanged(Vector3.Normalize(value));
     }
 }

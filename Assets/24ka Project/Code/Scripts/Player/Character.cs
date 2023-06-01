@@ -1,6 +1,6 @@
-using Player;
-using Player.CharacterStates;
 using Scripts.Interfaces;
+using Scripts.Player;
+using Scripts.Player.CharacterStates;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,6 +9,7 @@ using UnityEngine;
 public class Character : MonoBehaviour
 {
     private CharacterInput _input;
+    private Animator _animator;
 
     private List<StateBase> _states;
     private StateBase _currentState;
@@ -18,6 +19,7 @@ public class Character : MonoBehaviour
     private void Awake()
     {
         _input = GetComponent<CharacterInput>();
+        _animator = GetComponent<Animator>();
     }
 
     private void Start()
@@ -26,7 +28,7 @@ public class Character : MonoBehaviour
 
         _states = new List<StateBase>()
         {
-            new WalkState(movement)
+            new WalkState(_animator, movement)
         };
         _currentState = _states[0];
     }
@@ -38,7 +40,7 @@ public class Character : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (_movementDirection != Vector2.zero && _currentState is IMovable movable)
+        if (_currentState is IMovable movable)
         {
             movable.Move(_movementDirection);
         }

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Player
+namespace Scripts.Player
 {
     internal class Movement
     {
@@ -15,7 +15,7 @@ namespace Player
 
         public virtual void Move(Vector2 direction)
         {
-            _transform.Translate(Vector3.Normalize(direction) * _speed);
+            _transform.Translate(direction * _speed);
         }
     }
 }
