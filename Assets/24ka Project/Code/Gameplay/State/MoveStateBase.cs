@@ -1,19 +1,21 @@
-﻿using Scripts.Interfaces;
+﻿using Code.Gameplay.Systems;
+using Code.Interfaces.Architecture;
+using Code.Interfaces.Gameplay;
+using Code.Utils;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using Utils;
 
-namespace Scripts.Player.CharacterStates
+namespace Code.Gameplay.State
 {
-    internal class WalkState : StateBase, IMovable
+    internal abstract class MoveStateBase : StateBase, IMovable
     {
         private Movement _movement;
         private MovementAnimation _movementAnimation;
-
-        public WalkState(Animator animator, Movement movement) : base(animator) 
+        protected MoveStateBase(IStateSwither swither, Movement movement, MovementAnimation animation) 
+            : base(swither)
         {
             _movement = movement;
-            _movementAnimation = new MovementAnimation(Animator, "walk_up", "walk_down", "walk_left", "walk_right");
+            _movementAnimation = animation;
         }
 
         public void Move(Vector2 direction)

@@ -1,8 +1,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
-using Utils;
 
-namespace Scripts.Player.CharacterStates
+namespace Code.Gameplay.Systems
 {
     public class MovementAnimation
     {

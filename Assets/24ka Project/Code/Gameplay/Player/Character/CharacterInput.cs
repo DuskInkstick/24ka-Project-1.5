@@ -7,6 +7,7 @@ public class CharacterInput : MonoBehaviour
     private InputControl _inputControl;
 
     public event Action<Vector2> OnMovementVectorChanged;
+    public event Action<bool> OnFocusChanged;
 
     private void Awake()
     {
@@ -18,6 +19,9 @@ public class CharacterInput : MonoBehaviour
         _inputControl.Enable();
         _inputControl.Character.Movement.performed += ChangeMovementVector;
         _inputControl.Character.Movement.canceled += ChangeMovementVector;
+
+        _inputControl.Character.Focus.started += ChangeFocus;
+        _inputControl.Character.Focus.canceled += ChangeFocus;
     }
 
     private void OnDisable()
@@ -25,11 +29,20 @@ public class CharacterInput : MonoBehaviour
         _inputControl.Disable();
         _inputControl.Character.Movement.performed -= ChangeMovementVector;
         _inputControl.Character.Movement.canceled -= ChangeMovementVector;
+
+        _inputControl.Character.Focus.started -= ChangeFocus;
+        _inputControl.Character.Focus.canceled -= ChangeFocus;
     }
 
     private void ChangeMovementVector(InputAction.CallbackContext context)
     {
         var value = context.ReadValue<Vector2>();
-        OnMovementVectorChanged(Vector3.Normalize(value));
+        OnMovementVectorChanged(value);
+    }
+
+    private void ChangeFocus(InputAction.CallbackContext context)
+    {
+        var value = context.ReadValueAsButton();
+        OnFocusChanged(value);
     }
 }

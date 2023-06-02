@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace Utils
+namespace Code.Utils
 {
     internal static class Vector2Helper
     {
