@@ -3,7 +3,7 @@ using UnityEngine.EventSystems;
 
 namespace Code.Gameplay.Systems
 {
-    public class MovementAnimation
+    public class FourSideAnimation
     {
         private Animator _animator;
 
@@ -14,7 +14,7 @@ namespace Code.Gameplay.Systems
 
         private MoveDirection _currenetMovementDirection = MoveDirection.None;
 
-        public MovementAnimation(Animator animator, string upAnim, string downAnim, string leftAnim, string rightAnim)
+        public FourSideAnimation(Animator animator, string upAnim, string downAnim, string leftAnim, string rightAnim)
         {
             _animator = animator;
             _upAnim = upAnim;
@@ -29,14 +29,6 @@ namespace Code.Gameplay.Systems
                 return;
             
             _currenetMovementDirection = moveDirection;
-            
-            if(moveDirection == MoveDirection.None)
-            {
-                _animator.SetBool("IsMoving", false);
-                return;
-            }
-
-            _animator.SetBool("IsMoving", true);
 
             switch (moveDirection)
             {
@@ -53,6 +45,16 @@ namespace Code.Gameplay.Systems
                     _animator.Play(_rightAnim);
                     break;
             }
+        }
+
+        public void SetBool(string paramName, bool value)
+        {
+            _animator.SetBool(paramName, value);
+        }
+
+        public void Clean()
+        {
+            _currenetMovementDirection = MoveDirection.None;
         }
     }
 }

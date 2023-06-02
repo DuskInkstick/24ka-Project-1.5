@@ -2,8 +2,8 @@
 
 namespace Code.Interfaces.Architecture
 {
-    public interface IStateSwither
+    public interface IStateSwitcher
     {
-        void SwithState<T>() where T : StateBase;
+        void SwitchState<T>() where T : StateBase;
     } 
 }

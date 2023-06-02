@@ -44,6 +44,15 @@ public partial class @InputControl: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": ""Press(behavior=2)"",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""View"",
+                    ""type"": ""Value"",
+                    ""id"": ""c5d012d5-21c4-4986-aead-f97e7f8d8de8"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -112,6 +121,61 @@ public partial class @InputControl: IInputActionCollection2, IDisposable
                     ""action"": ""Focus"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""Arrows"",
+                    ""id"": ""7711b958-454d-471c-9ac2-d0a324703bd7"",
+                    ""path"": ""2DVector"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""View"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""up"",
+                    ""id"": ""2af830b1-a151-40dc-a9c0-87504054c651"",
+                    ""path"": ""<Keyboard>/upArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard"",
+                    ""action"": ""View"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""down"",
+                    ""id"": ""ca8ef765-9534-46fe-9cb5-36065cd1e2c8"",
+                    ""path"": ""<Keyboard>/downArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard"",
+                    ""action"": ""View"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""left"",
+                    ""id"": ""d78c5e1e-3565-4657-960e-188751f985e2"",
+                    ""path"": ""<Keyboard>/leftArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard"",
+                    ""action"": ""View"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""right"",
+                    ""id"": ""4eef4550-5556-43db-83c7-5f4e67d86add"",
+                    ""path"": ""<Keyboard>/rightArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard"",
+                    ""action"": ""View"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
                 }
             ]
         }
@@ -150,6 +214,7 @@ public partial class @InputControl: IInputActionCollection2, IDisposable
         m_Character = asset.FindActionMap("Character", throwIfNotFound: true);
         m_Character_Movement = m_Character.FindAction("Movement", throwIfNotFound: true);
         m_Character_Focus = m_Character.FindAction("Focus", throwIfNotFound: true);
+        m_Character_View = m_Character.FindAction("View", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -213,12 +278,14 @@ public partial class @InputControl: IInputActionCollection2, IDisposable
     private List<ICharacterActions> m_CharacterActionsCallbackInterfaces = new List<ICharacterActions>();
     private readonly InputAction m_Character_Movement;
     private readonly InputAction m_Character_Focus;
+    private readonly InputAction m_Character_View;
     public struct CharacterActions
     {
         private @InputControl m_Wrapper;
         public CharacterActions(@InputControl wrapper) { m_Wrapper = wrapper; }
         public InputAction @Movement => m_Wrapper.m_Character_Movement;
         public InputAction @Focus => m_Wrapper.m_Character_Focus;
+        public InputAction @View => m_Wrapper.m_Character_View;
         public InputActionMap Get() { return m_Wrapper.m_Character; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -234,6 +301,9 @@ public partial class @InputControl: IInputActionCollection2, IDisposable
             @Focus.started += instance.OnFocus;
             @Focus.performed += instance.OnFocus;
             @Focus.canceled += instance.OnFocus;
+            @View.started += instance.OnView;
+            @View.performed += instance.OnView;
+            @View.canceled += instance.OnView;
         }
 
         private void UnregisterCallbacks(ICharacterActions instance)
@@ -244,6 +314,9 @@ public partial class @InputControl: IInputActionCollection2, IDisposable
             @Focus.started -= instance.OnFocus;
             @Focus.performed -= instance.OnFocus;
             @Focus.canceled -= instance.OnFocus;
+            @View.started -= instance.OnView;
+            @View.performed -= instance.OnView;
+            @View.canceled -= instance.OnView;
         }
 
         public void RemoveCallbacks(ICharacterActions instance)
@@ -283,5 +356,6 @@ public partial class @InputControl: IInputActionCollection2, IDisposable
     {
         void OnMovement(InputAction.CallbackContext context);
         void OnFocus(InputAction.CallbackContext context);
+        void OnView(InputAction.CallbackContext context);
     }
 }

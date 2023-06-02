@@ -8,7 +8,7 @@ using UnityEngine;
 
 [RequireComponent(typeof(CharacterInput))]
 [RequireComponent(typeof(Rigidbody2D))]
-public class Character : MonoBehaviour, IStateSwither
+public class Character : MonoBehaviour, IStateSwitcher
 {
     private CharacterInput _input;
     private Animator _animator;
@@ -17,8 +17,12 @@ public class Character : MonoBehaviour, IStateSwither
     private StateBase _currentState;
 
     private Vector2 _movementDirection;
+    private Vector2 _viewDirection;
+    private Vector2 _lastViewDirection; // Last no zero vector of view or moving
 
-    public void SwithState<T>() where T : StateBase
+    private bool _isFocused = false;
+
+    public void SwitchState<T>() where T : StateBase
     {
         var newState = _states.Find(state => state is T);
 
@@ -28,6 +32,8 @@ public class Character : MonoBehaviour, IStateSwither
         _currentState.Stop();
         _currentState = newState;
         _currentState.Start();
+
+        Focus(_isFocused);
     }
 
     private void Awake()
@@ -40,6 +46,7 @@ public class Character : MonoBehaviour, IStateSwither
     {
         _states = new List<StateBase>()
         {
+            new IdleState(this, _animator),
             new WalkState(this, transform, 0.15f, _animator),
             new FocusState(this, transform, 0.07f, _animator)
         };
@@ -48,32 +55,52 @@ public class Character : MonoBehaviour, IStateSwither
 
     private void OnEnable()
     {
-        _input.OnMovementVectorChanged += SetMovemetnDirection;
-        _input.OnFocusChanged += SetFocusState;
+        _input.MovementVectorChanged += SetMovemetnDirection;
+        _input.ViewVectorChanged += SetViewDirection;
+        _input.FocusChanged += Focus;
     }
 
     private void FixedUpdate()
     {
+        if (_currentState is ILooking looking)
+            looking.Look(_viewDirection);
+
         if (_currentState is IMovable movable)
-        {
             movable.Move(_movementDirection);
-        }
     }
 
     private void OnDisable()
     {
-        _input.OnMovementVectorChanged -= SetMovemetnDirection;
-        _input.OnFocusChanged -= SetFocusState;
+        _input.MovementVectorChanged -= SetMovemetnDirection;
+        _input.ViewVectorChanged -= SetViewDirection;
+        _input.FocusChanged -= Focus;
     }
 
-    private void SetMovemetnDirection(Vector2 movementDirection)
+    private void SetMovemetnDirection(Vector2 direction)
     {
-        _movementDirection = movementDirection;
+        _movementDirection = direction;
+        CalcLastViewDirection();
     }
 
-    private void SetFocusState(bool isFocused)
+    private void SetViewDirection(Vector2 direction)
     {
+        _viewDirection = direction;
+        CalcLastViewDirection();
+    }
+
+    private void Focus(bool isFocused)
+    {
+        _isFocused = isFocused;
         if (_currentState is IFocusable focusable)
             focusable.Focus(isFocused);
+    }
+
+    private void CalcLastViewDirection()
+    {
+        if(_viewDirection != Vector2.zero)
+            _lastViewDirection = _viewDirection;
+
+        else if(_movementDirection != Vector2.zero)
+            _lastViewDirection = _movementDirection;
     }
 }

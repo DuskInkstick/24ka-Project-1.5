@@ -6,19 +6,24 @@ using UnityEngine;
 
 namespace Code.Gameplay.Player.Character.States
 {
-    internal class WalkState : MoveStateBase, IFocusable
+    internal class WalkState : MoveState, IFocusable
     {
-        public WalkState(IStateSwither swither, Transform transform, float speed, Animator animator)
+        public WalkState(IStateSwitcher switcher, Transform transform, float speed, Animator animator)
             : base(
-                  swither,
+                  switcher,
                   new Movement(transform, speed), 
-                  new MovementAnimation(animator, "walk_up", "walk_down", "walk_left", "walk_right")) 
+                  new FourSideAnimation(animator, "walk_up", "walk_down", "walk_left", "walk_right")) 
         {  }
 
         public void Focus(bool isFocused)
         {
             if (isFocused)
-                StateSwither.SwithState<FocusState>();
+                StateSwitcher.SwitchState<FocusState>();
+        }
+
+        protected override void OnMoveStoped()
+        {
+            StateSwitcher.SwitchState<IdleState>();
         }
     }
 }

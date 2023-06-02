@@ -5,11 +5,11 @@ namespace Code.Gameplay.State
 {
     public abstract class StateBase
     {
-        protected IStateSwither StateSwither { get; }
+        protected IStateSwitcher StateSwitcher { get; }
 
-        protected StateBase(IStateSwither stateSwither)
+        protected StateBase(IStateSwitcher stateSwitcher)
         {
-            StateSwither = stateSwither;
+            StateSwitcher = stateSwitcher;
         }
 
         public virtual void Start() { }
