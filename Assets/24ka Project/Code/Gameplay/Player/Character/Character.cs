@@ -18,7 +18,7 @@ public class Character : MonoBehaviour, IStateSwitcher
 
     private Vector2 _movementDirection;
     private Vector2 _viewDirection;
-    private Vector2 _lastViewDirection; // Last no zero vector of view or moving
+    private Vector2 _lastViewDirection;
 
     private bool _isFocused = false;
 
@@ -29,10 +29,16 @@ public class Character : MonoBehaviour, IStateSwitcher
         if (newState == null)
             throw new InvalidOperationException($"Character does not contain the state: {typeof(T).Name}");
 
+        if(_currentState is IWatcher watcher) 
+            _lastViewDirection = watcher.ViewDirection;
+
         _currentState.Stop();
+
         _currentState = newState;
+
         _currentState.Start();
 
+        Look(_lastViewDirection);
         Focus(_isFocused);
     }
 
@@ -62,11 +68,8 @@ public class Character : MonoBehaviour, IStateSwitcher
 
     private void FixedUpdate()
     {
-        if (_currentState is ILooking looking)
-            looking.Look(_viewDirection);
-
-        if (_currentState is IMovable movable)
-            movable.Move(_movementDirection);
+        Move(_movementDirection);
+        Look(_viewDirection);
     }
 
     private void OnDisable()
@@ -79,13 +82,23 @@ public class Character : MonoBehaviour, IStateSwitcher
     private void SetMovemetnDirection(Vector2 direction)
     {
         _movementDirection = direction;
-        CalcLastViewDirection();
     }
 
     private void SetViewDirection(Vector2 direction)
     {
         _viewDirection = direction;
-        CalcLastViewDirection();
+    }
+
+    private void Move(Vector2 direction)
+    {
+        if(_currentState is IMovable movable)
+            movable.Move(direction);
+    }
+
+    private void Look(Vector2 direction)
+    {
+        if (_currentState is IWatcher watcher)
+            watcher.Look(_viewDirection);
     }
 
     private void Focus(bool isFocused)
@@ -93,14 +106,5 @@ public class Character : MonoBehaviour, IStateSwitcher
         _isFocused = isFocused;
         if (_currentState is IFocusable focusable)
             focusable.Focus(isFocused);
-    }
-
-    private void CalcLastViewDirection()
-    {
-        if(_viewDirection != Vector2.zero)
-            _lastViewDirection = _viewDirection;
-
-        else if(_movementDirection != Vector2.zero)
-            _lastViewDirection = _movementDirection;
     }
 }

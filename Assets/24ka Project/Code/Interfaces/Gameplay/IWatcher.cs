@@ -2,8 +2,9 @@
 
 namespace Code.Interfaces.Gameplay
 {
-    internal interface ILooking
+    internal interface IWatcher
     {
+        Vector2 ViewDirection { get; }
         void Look(Vector2 direction);
     }
 }

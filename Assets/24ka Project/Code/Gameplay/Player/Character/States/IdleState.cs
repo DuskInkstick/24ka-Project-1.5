@@ -8,10 +8,13 @@ using UnityEngine.EventSystems;
 
 namespace Code.Gameplay.Player.Character.States
 {
-    internal class IdleState : StateBase, IMovable, ILooking
+    internal class IdleState : StateBase, IMovable, IWatcher
     {
         private readonly FourSideAnimation _animation;
+
         private MoveDirection _viewDirection;
+
+        public Vector2 ViewDirection { get; private set; }
 
         public IdleState(IStateSwitcher stateSwitcher, Animator animator) : base(stateSwitcher)
         {
@@ -26,6 +29,10 @@ namespace Code.Gameplay.Player.Character.States
         public void Look(Vector2 direction)
         {
             _viewDirection = direction.ToMoveDirection();
+
+            if (_viewDirection != MoveDirection.None)
+                ViewDirection = direction;
+
             _animation.Animate(_viewDirection);
         }
 
