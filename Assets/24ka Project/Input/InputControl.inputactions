@@ -31,6 +31,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "BlockAndDash",
+                    "type": "Button",
+                    "id": "dd8d24a8-e376-471a-b212-aba5010bd266",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "Press(behavior=2)",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -154,6 +163,17 @@
                     "action": "View",
                     "isComposite": false,
                     "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "da4298bc-9ec8-4878-817c-4cc34fbc869b",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard",
+                    "action": "BlockAndDash",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         }
