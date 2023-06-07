@@ -47,14 +47,8 @@ namespace Code.Gameplay.Systems
             }
         }
 
-        public void SetBool(string paramName, bool value)
-        {
-            _animator.SetBool(paramName, value);
-        }
-
-        public void Clean()
-        {
-            _currenetMovementDirection = MoveDirection.None;
-        }
+        public void SetBool(string paramName, bool value) => _animator.SetBool(paramName, value);
+        
+        public void CleanState() => _currenetMovementDirection = MoveDirection.None;
     }
 }

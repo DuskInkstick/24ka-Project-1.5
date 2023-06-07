@@ -24,6 +24,11 @@ namespace Code.Gameplay.State
             _animation = animation;
         }
 
+        public override void Start()
+        {
+            _animation.CleanState();
+        }
+
         public void Move(Vector2 direction)
         {
             _moveDirection = direction.ToMoveDirection();
@@ -53,12 +58,6 @@ namespace Code.Gameplay.State
 
             Animate();
             OnLooked(direction);
-        }
-
-        public override void Start()
-        {
-            _animation.SetBool("IsMoving", true);
-            _animation.Clean();
         }
 
         protected virtual void OnMoveStoped() { }

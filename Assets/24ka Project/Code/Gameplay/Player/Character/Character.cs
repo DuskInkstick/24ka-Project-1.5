@@ -98,7 +98,7 @@ public class Character : MonoBehaviour, IStateSwitcher
     private void Look(Vector2 direction)
     {
         if (_currentState is IWatcher watcher)
-            watcher.Look(_viewDirection);
+            watcher.Look(direction);
     }
 
     private void Focus(bool isFocused)

@@ -20,6 +20,12 @@ namespace Code.Gameplay.Player.Character.States
         {
             _animation = new FourSideAnimation(animator, "idle_up", "idle_down", "idle_left", "idle_right");
         }
+
+        public override void Start()
+        {
+            _animation.CleanState();
+        }
+
         public void Move(Vector2 direction)
         {
             if(direction.ToMoveDirection() != MoveDirection.None)
@@ -34,12 +40,6 @@ namespace Code.Gameplay.Player.Character.States
                 ViewDirection = direction;
 
             _animation.Animate(_viewDirection);
-        }
-
-        public override void Start()
-        {
-            _animation.Clean();
-            _animation.SetBool("IsMoving", false);
         }
     }
 }
