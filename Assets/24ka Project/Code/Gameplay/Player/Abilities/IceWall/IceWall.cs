@@ -1,46 +1,45 @@
-﻿using Code.Utils;
+﻿using Code.Gameplay.Systems.LifeDamage;
+using Code.Interfaces.Gameplay;
+using Code.Utils;
 using UnityEngine;
 
 namespace Code.Gameplay.Player.Abilities.IceWall
 {
-    public class IceWall : MonoBehaviour
+    public class IceWall : MonoBehaviour, IDamageable
     {
         [SerializeField] private ParticleSystem _hitEffect;
 
         private Animator _animator;
         private IceWallPart[] _ice;
+        private Resilience _resilience;
 
         private int[] _breakingOrder;
         private int _breakeIndex = -1;
+
+        public CausedDamage ApplyDamage(CausedDamage damage)
+        {
+            Instantiate(_hitEffect, damage.Point, Quaternion.identity);
+
+            BreakIce(damage.Value);
+
+            return _resilience.ApplyDamage(damage);
+        }
 
         private void Start()
         {
             _animator = GetComponent<Animator>();
             _ice = gameObject.GetComponentsInChildren<IceWallPart>();
 
+            _resilience = new Resilience(6);
+
             _breakingOrder = new int[_ice.Length];
 
-            for (int i = 0; i < _ice.Length; i++)
-            {
-                if (_ice[i].IceSize == 0)
-                    _ice[i].SpriteIndex = Random.Range(0, 2);
-                else
-                    _ice[i].SpriteIndex = Random.Range(2, 5);
-
-                _breakingOrder[i] = i;
-            }
-            _breakingOrder.Shuffle();
+            GenerateIce();
         }
 
-        private void OnCollisionEnter2D(Collision2D collision)
+        private void BreakIce(int count)
         {
-            Instantiate(_hitEffect, collision.GetContact(0).point, Quaternion.identity);
-            ApplyDamage(1);
-        }
-
-        private void ApplyDamage(int amount)
-        {
-            for (int i = 0; i < amount; i++)
+            for (int i = 0; i < count; i++)
             {
                 _breakeIndex++;
 
@@ -56,5 +55,18 @@ namespace Code.Gameplay.Player.Abilities.IceWall
             }
         }
 
+        private void GenerateIce()
+        {
+            for (int i = 0; i < _ice.Length; i++)
+            {
+                if (_ice[i].IceSize == 0)
+                    _ice[i].SpriteIndex = Random.Range(0, 2);
+                else
+                    _ice[i].SpriteIndex = Random.Range(2, 5);
+
+                _breakingOrder[i] = i;
+            }
+            _breakingOrder.Shuffle();
+        }
     }
 }

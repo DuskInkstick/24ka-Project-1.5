@@ -26,7 +26,7 @@ namespace Code.Gameplay.Player.Character.States
             _animation.CleanState();
         }
 
-        public void Move(Vector2 direction)
+        public void Move(Vector2 direction, float deltaTime)
         {
             if(direction.ToMoveDirection() != MoveDirection.None)
                 StateSwitcher.SwitchState<WalkState>();

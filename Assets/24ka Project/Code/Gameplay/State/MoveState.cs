@@ -29,13 +29,13 @@ namespace Code.Gameplay.State
             _animation.CleanState();
         }
 
-        public void Move(Vector2 direction)
+        public void Move(Vector2 direction, float deltaTime)
         {
             _moveDirection = direction.ToMoveDirection();
 
             if (_moveDirection != MoveDirection.None)
             {
-                _movement.Move(direction);
+                _movement.Move(direction, deltaTime);
 
                 if (_viewDirection == MoveDirection.None)
                     ViewDirection = direction;
