@@ -33,12 +33,12 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "BlockAndDash",
+                    "name": "DashAndBlock",
                     "type": "Button",
                     "id": "dd8d24a8-e376-471a-b212-aba5010bd266",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": "Press(behavior=2)",
+                    "interactions": "Hold",
                     "initialStateCheck": false
                 }
             ],
@@ -171,7 +171,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard",
-                    "action": "BlockAndDash",
+                    "action": "DashAndBlock",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

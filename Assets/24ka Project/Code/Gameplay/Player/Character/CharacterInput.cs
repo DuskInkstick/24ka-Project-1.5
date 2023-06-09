@@ -5,10 +5,14 @@ using UnityEngine.InputSystem;
 public class CharacterInput : MonoBehaviour
 {
     private InputControl _inputControl;
+    private bool _isFocused = false;
+    private bool _isLongBlockPerfomed = false;
 
     public event Action<Vector2> MovementVectorChanged;
     public event Action<Vector2> ViewVectorChanged;
     public event Action<bool> FocusChanged;
+    public event Action DashOrBlock;
+    public event Action<bool> LongBlock;
 
     private void Awake()
     {
@@ -26,6 +30,11 @@ public class CharacterInput : MonoBehaviour
 
         _inputControl.Character.Focus.started += ChangeFocus;
         _inputControl.Character.Focus.canceled += ChangeFocus;
+
+        _inputControl.Character.DashAndBlock.started += StartStopDashOrBlock;
+        _inputControl.Character.DashAndBlock.performed += PerformDashOrBlock;
+        _inputControl.Character.DashAndBlock.canceled += CancelDashOrBlock;
+
     }
 
     private void OnDisable()
@@ -39,6 +48,10 @@ public class CharacterInput : MonoBehaviour
 
         _inputControl.Character.Focus.started -= ChangeFocus;
         _inputControl.Character.Focus.canceled -= ChangeFocus;
+
+        _inputControl.Character.DashAndBlock.started -= StartStopDashOrBlock;
+        _inputControl.Character.DashAndBlock.performed -= PerformDashOrBlock;
+        _inputControl.Character.DashAndBlock.canceled -= CancelDashOrBlock;
     }
 
     private void ChangeMovementVector(InputAction.CallbackContext context)
@@ -55,7 +68,34 @@ public class CharacterInput : MonoBehaviour
 
     private void ChangeFocus(InputAction.CallbackContext context)
     {
-        var value = context.ReadValueAsButton();
-        FocusChanged(value);
+        _isFocused = context.ReadValueAsButton();
+        FocusChanged(_isFocused);
+    }
+
+    private void StartStopDashOrBlock(InputAction.CallbackContext context)
+    {
+        if(_isFocused == false)
+            DashOrBlock.Invoke();
+    }
+
+    private void CancelDashOrBlock(InputAction.CallbackContext context)
+    {
+        if (_isFocused && _isLongBlockPerfomed)
+        {
+            _isLongBlockPerfomed = false;
+            LongBlock.Invoke(false);
+        }
+        else if(_isFocused && _isLongBlockPerfomed == false)
+        {
+            DashOrBlock.Invoke();
+        }
+    }
+         
+    private void PerformDashOrBlock(InputAction.CallbackContext context)
+    {
+        _isLongBlockPerfomed = true;
+
+        if(_isFocused)
+            LongBlock.Invoke(true);
     }
 }

@@ -55,12 +55,12 @@ public partial class @InputControl: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": true
                 },
                 {
-                    ""name"": ""BlockAndDash"",
+                    ""name"": ""DashAndBlock"",
                     ""type"": ""Button"",
                     ""id"": ""dd8d24a8-e376-471a-b212-aba5010bd266"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
-                    ""interactions"": ""Press(behavior=2)"",
+                    ""interactions"": ""Hold"",
                     ""initialStateCheck"": false
                 }
             ],
@@ -193,7 +193,7 @@ public partial class @InputControl: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard"",
-                    ""action"": ""BlockAndDash"",
+                    ""action"": ""DashAndBlock"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -235,7 +235,7 @@ public partial class @InputControl: IInputActionCollection2, IDisposable
         m_Character_Movement = m_Character.FindAction("Movement", throwIfNotFound: true);
         m_Character_Focus = m_Character.FindAction("Focus", throwIfNotFound: true);
         m_Character_View = m_Character.FindAction("View", throwIfNotFound: true);
-        m_Character_BlockAndDash = m_Character.FindAction("BlockAndDash", throwIfNotFound: true);
+        m_Character_DashAndBlock = m_Character.FindAction("DashAndBlock", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -300,7 +300,7 @@ public partial class @InputControl: IInputActionCollection2, IDisposable
     private readonly InputAction m_Character_Movement;
     private readonly InputAction m_Character_Focus;
     private readonly InputAction m_Character_View;
-    private readonly InputAction m_Character_BlockAndDash;
+    private readonly InputAction m_Character_DashAndBlock;
     public struct CharacterActions
     {
         private @InputControl m_Wrapper;
@@ -308,7 +308,7 @@ public partial class @InputControl: IInputActionCollection2, IDisposable
         public InputAction @Movement => m_Wrapper.m_Character_Movement;
         public InputAction @Focus => m_Wrapper.m_Character_Focus;
         public InputAction @View => m_Wrapper.m_Character_View;
-        public InputAction @BlockAndDash => m_Wrapper.m_Character_BlockAndDash;
+        public InputAction @DashAndBlock => m_Wrapper.m_Character_DashAndBlock;
         public InputActionMap Get() { return m_Wrapper.m_Character; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -327,9 +327,9 @@ public partial class @InputControl: IInputActionCollection2, IDisposable
             @View.started += instance.OnView;
             @View.performed += instance.OnView;
             @View.canceled += instance.OnView;
-            @BlockAndDash.started += instance.OnBlockAndDash;
-            @BlockAndDash.performed += instance.OnBlockAndDash;
-            @BlockAndDash.canceled += instance.OnBlockAndDash;
+            @DashAndBlock.started += instance.OnDashAndBlock;
+            @DashAndBlock.performed += instance.OnDashAndBlock;
+            @DashAndBlock.canceled += instance.OnDashAndBlock;
         }
 
         private void UnregisterCallbacks(ICharacterActions instance)
@@ -343,9 +343,9 @@ public partial class @InputControl: IInputActionCollection2, IDisposable
             @View.started -= instance.OnView;
             @View.performed -= instance.OnView;
             @View.canceled -= instance.OnView;
-            @BlockAndDash.started -= instance.OnBlockAndDash;
-            @BlockAndDash.performed -= instance.OnBlockAndDash;
-            @BlockAndDash.canceled -= instance.OnBlockAndDash;
+            @DashAndBlock.started -= instance.OnDashAndBlock;
+            @DashAndBlock.performed -= instance.OnDashAndBlock;
+            @DashAndBlock.canceled -= instance.OnDashAndBlock;
         }
 
         public void RemoveCallbacks(ICharacterActions instance)
@@ -386,6 +386,6 @@ public partial class @InputControl: IInputActionCollection2, IDisposable
         void OnMovement(InputAction.CallbackContext context);
         void OnFocus(InputAction.CallbackContext context);
         void OnView(InputAction.CallbackContext context);
-        void OnBlockAndDash(InputAction.CallbackContext context);
+        void OnDashAndBlock(InputAction.CallbackContext context);
     }
 }
