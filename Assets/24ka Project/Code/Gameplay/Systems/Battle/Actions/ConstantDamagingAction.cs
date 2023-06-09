@@ -1,5 +1,6 @@
-﻿
-namespace Code.Gameplay.Systems.LifeDamage.Actions
+﻿using Code.Gameplay.Systems.Battle.Elementals;
+
+namespace Code.Gameplay.Systems.Battle.Actions
 {
     internal class ConstantDamagingAction : DamagingAction
     {

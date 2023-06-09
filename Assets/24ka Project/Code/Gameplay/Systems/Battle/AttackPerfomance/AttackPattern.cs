@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
-using Unity.VisualScripting;
+﻿using Code.Gameplay.Systems.Battle.AttackingObjects;
+using System.Collections.Generic;
 using UnityEngine;
 
-namespace Code.Gameplay.Systems.Attack.AttackPatterns
+namespace Code.Gameplay.Systems.Battle.AttackPerfomance
 {
     public abstract class AttackPattern
     {

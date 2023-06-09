@@ -1,8 +1,9 @@
-﻿using Code.Interfaces.Gameplay;
+﻿using Code.Gameplay.Systems.Battle.Elementals;
+using Code.Interfaces.Gameplay;
 using System;
 using UnityEngine;
 
-namespace Code.Gameplay.Systems.LifeDamage.Actions
+namespace Code.Gameplay.Systems.Battle.Actions
 {
     internal class DamagingAction
     {

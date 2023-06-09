@@ -1,4 +1,5 @@
-﻿namespace Code.Gameplay.Systems.Attack
+﻿
+namespace Code.Gameplay.Systems.Battle.Enums
 {
     public enum AttackingActionType
     {

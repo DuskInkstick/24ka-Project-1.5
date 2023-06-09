@@ -1,6 +1,6 @@
 ﻿using Code.Gameplay.Player.Character.Battle;
-using Code.Gameplay.Systems.Attack;
-using Code.Gameplay.Systems.Attack.Bullets;
+using Code.Gameplay.Systems.Battle.AttackingObjects;
+using Code.Gameplay.Systems.Battle.AttackPerfomance;
 using UnityEngine;
 
 namespace Code.Gameplay.Player.Character.Buttle

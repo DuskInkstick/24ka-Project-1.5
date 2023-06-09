@@ -1,6 +1,7 @@
-﻿using UnityEngine;
+﻿using Code.Gameplay.Systems.Battle.Elementals;
+using UnityEngine;
 
-namespace Code.Gameplay.Systems.LifeDamage
+namespace Code.Gameplay.Systems.Battle
 {
     public class CausedDamage
     {

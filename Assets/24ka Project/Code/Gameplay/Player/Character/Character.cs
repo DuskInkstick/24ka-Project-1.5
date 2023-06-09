@@ -1,8 +1,10 @@
 using Code.Gameplay.Player.Character.Buttle;
 using Code.Gameplay.Player.Character.States;
 using Code.Gameplay.State;
-using Code.Gameplay.Systems.Attack.Bullets;
-using Code.Gameplay.Systems.LifeDamage;
+using Code.Gameplay.Systems.Battle;
+using Code.Gameplay.Systems.Battle.AttackingObjects;
+using Code.Gameplay.Systems.Battle.Elementals;
+using Code.Gameplay.Systems.Battle.Enums;
 using Code.Interfaces.Architecture;
 using Code.Utils;
 using System;

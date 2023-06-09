@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using Code.Gameplay.Systems.Battle.Enums;
+using System.Collections.Generic;
 
-namespace Code.Gameplay.Systems.LifeDamage
+namespace Code.Gameplay.Systems.Battle.Elementals
 {
     public class ElementalResistance
     {

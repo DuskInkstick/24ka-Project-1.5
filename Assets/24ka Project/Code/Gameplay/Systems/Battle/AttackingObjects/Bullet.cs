@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Code.Gameplay.Systems.Attack.Bullets
+namespace Code.Gameplay.Systems.Battle.AttackingObjects
 {
     public class Bullet : AttackingObject
     {

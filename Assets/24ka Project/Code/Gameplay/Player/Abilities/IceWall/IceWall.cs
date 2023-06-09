@@ -1,4 +1,4 @@
-﻿using Code.Gameplay.Systems.LifeDamage;
+﻿using Code.Gameplay.Systems.Battle;
 using Code.Interfaces.Gameplay;
 using Code.Utils;
 using UnityEngine;

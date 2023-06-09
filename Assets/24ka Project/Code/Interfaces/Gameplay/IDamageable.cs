@@ -1,4 +1,4 @@
-﻿using Code.Gameplay.Systems.LifeDamage;
+﻿using Code.Gameplay.Systems.Battle;
 
 namespace Code.Interfaces.Gameplay
 {

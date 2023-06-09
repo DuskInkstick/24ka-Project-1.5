@@ -1,5 +1,5 @@
-﻿using Code.Gameplay.Systems.Attack.AttackPatterns;
-using Code.Gameplay.Systems.Attack.Bullets;
+﻿using Code.Gameplay.Systems.Battle.AttackingObjects;
+using Code.Gameplay.Systems.Battle.AttackPerfomance;
 using UnityEngine;
 
 namespace Code.Gameplay.Player.Character.Battle

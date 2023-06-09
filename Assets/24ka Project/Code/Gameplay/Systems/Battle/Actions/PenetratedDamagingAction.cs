@@ -1,6 +1,7 @@
-﻿using UnityEngine;
+﻿using Code.Gameplay.Systems.Battle.Elementals;
+using UnityEngine;
 
-namespace Code.Gameplay.Systems.LifeDamage.Actions
+namespace Code.Gameplay.Systems.Battle.Actions
 {
     internal class PenetratedDamagingAction : DamagingAction
     {

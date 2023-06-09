@@ -1,6 +1,7 @@
 ﻿using Code.Gameplay.Systems;
-using Code.Gameplay.Systems.Attack;
-using Code.Gameplay.Systems.LifeDamage;
+using Code.Gameplay.Systems.Battle;
+using Code.Gameplay.Systems.Battle.AttackPerfomance;
+using Code.Gameplay.Systems.Battle.Enums;
 using Code.Interfaces.Architecture;
 using Code.Utils;
 using UnityEngine;

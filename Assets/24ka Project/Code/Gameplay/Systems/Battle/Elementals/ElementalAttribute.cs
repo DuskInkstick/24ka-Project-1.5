@@ -1,6 +1,7 @@
-﻿using System;
+﻿using Code.Gameplay.Systems.Battle.Enums;
+using System;
 
-namespace Code.Gameplay.Systems.LifeDamage
+namespace Code.Gameplay.Systems.Battle.Elementals
 {
     public class ElementalAttribute : ICloneable
     {

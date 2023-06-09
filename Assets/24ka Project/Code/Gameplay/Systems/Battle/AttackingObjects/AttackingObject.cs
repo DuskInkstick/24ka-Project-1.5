@@ -1,9 +1,10 @@
-﻿using Code.Gameplay.Systems.LifeDamage;
-using Code.Gameplay.Systems.LifeDamage.Actions;
+﻿using Code.Gameplay.Systems.Battle.Actions;
+using Code.Gameplay.Systems.Battle.Elementals;
+using Code.Gameplay.Systems.Battle.Enums;
 using Code.Interfaces.Gameplay;
 using UnityEngine;
 
-namespace Code.Gameplay.Systems.Attack
+namespace Code.Gameplay.Systems.Battle.AttackingObjects
 {
     public abstract class AttackingObject : MonoBehaviour
     {
@@ -18,9 +19,9 @@ namespace Code.Gameplay.Systems.Attack
         private DamagingAction _damagingAction;
         private float _lifeTimeTimer = 0f;
 
+        public int Id => _id;
         public Vector2 Direction { get; set; }
         public float LifeTime { get; set; }
-        public int Id => _id;
 
         protected virtual void Start()
         {
