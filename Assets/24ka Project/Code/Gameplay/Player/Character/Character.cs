@@ -1,53 +1,47 @@
+using Code.Gameplay.Player.Character.Buttle;
 using Code.Gameplay.Player.Character.States;
 using Code.Gameplay.State;
-using Code.Gameplay.Systems.Attack;
-using Code.Gameplay.Systems.Attack.AttackPatterns;
-using Code.Gameplay.Systems.LifeDamage.Actions;
+using Code.Gameplay.Systems.Attack.Bullets;
+using Code.Gameplay.Systems.LifeDamage;
 using Code.Interfaces.Architecture;
-using Code.Interfaces.Gameplay;
+using Code.Utils;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
+using UnityEngine.EventSystems;
 
 [RequireComponent(typeof(CharacterInput))]
 [RequireComponent(typeof(Rigidbody2D))]
 public class Character : MonoBehaviour, IStateSwitcher
 {
-    [SerializeField] private AttackingObject _attack;
-    private AttackPattern _attackPattern;
+    [SerializeField] private Bullet _attack;
 
     private CharacterInput _input;
     private Animator _animator;
 
-    private List<StateBase> _states;
-    private StateBase _currentState;
+    private List<CreatureStateBase> _states;
+    private CreatureStateBase _currentState;
 
-    private Vector2 _movementDirection;
-    private Vector2 _viewDirection;
-    private Vector2 _lastViewDirection;
+    private Vector2 _moveVector;
+    private Vector2 _lookVector;
+    private Vector2 _lastViewVector;
 
     private bool _isFocused = false;
 
-    private DamagingAction _damagingAction = new ConstantDamagingAction();
-
-    public void SwitchState<T>() where T : StateBase
+    public void SwitchState<T>() where T : CreatureStateBase
     {
         var newState = _states.Find(state => state is T);
 
         if (newState == null)
             throw new InvalidOperationException($"Character does not contain the state: {typeof(T).Name}");
-
-        if(_currentState is IWatcher watcher) 
-            _lastViewDirection = watcher.ViewDirection;
-
+       
+        _lastViewVector = _currentState.ViewVector;
         _currentState.Stop();
 
         _currentState = newState;
-
         _currentState.Start();
 
-        Look(_lastViewDirection);
+        _currentState.LookIn(_lastViewVector);
         Focus(_isFocused);
     }
 
@@ -59,13 +53,16 @@ public class Character : MonoBehaviour, IStateSwitcher
 
     private void Start()
     {
-        _attackPattern = new AttackPattern(transform, _attack);
+        var attackBehavior = new CharacterAttackBehavior(transform, _attack);
 
-        _states = new List<StateBase>()
+        var resilience = new Resilience(5, new ElementalAttribute(ElementalAttributeType.None, 0));
+        resilience.Resistance.Add(ElementalAttributeType.Ice, 2);
+
+        _states = new List<CreatureStateBase>()
         {
-            new IdleState(this, _animator),
-            new WalkState(this, transform, 8f, _animator),
-            new FocusState(this, transform, 4f, _animator)
+            new QuiescentState(this, _animator, resilience, attackBehavior),
+            new WalkState(this,  _animator, resilience, transform, 7f, attackBehavior),
+            new FocusState(this,  _animator, resilience, transform, 3f, attackBehavior)
         };
         _currentState = _states[0];
     }
@@ -79,12 +76,9 @@ public class Character : MonoBehaviour, IStateSwitcher
 
     private void Update()
     {
-        Move(_movementDirection);
-        Look(_viewDirection);
-        if (Keyboard.current.eKey.wasPressedThisFrame)
-        {
-            _attackPattern.Attack(_lastViewDirection);
-        }
+        Move(_moveVector);
+        LookAndAttack(_lookVector);
+        _currentState.Update(Time.deltaTime);
     }
 
     private void OnDisable()
@@ -96,30 +90,32 @@ public class Character : MonoBehaviour, IStateSwitcher
 
     private void SetMovemetnDirection(Vector2 direction)
     {
-        _movementDirection = direction;
+        _moveVector = direction;
     }
 
     private void SetViewDirection(Vector2 direction)
     {
-        _viewDirection = direction;
+        _lookVector = direction;
     }
 
     private void Move(Vector2 direction)
     {
-        if(_currentState is IMovable movable)
-            movable.Move(direction, Time.deltaTime);
+        _currentState.MoveIn(direction);
     }
 
-    private void Look(Vector2 direction)
+    private void LookAndAttack(Vector2 direction)
     {
-        if (_currentState is IWatcher watcher)
-            watcher.Look(direction);
+        _currentState.LookIn(direction);
+
+        if(direction.ToMoveDirection() != MoveDirection.None)
+            _currentState.Attack();
     }
 
     private void Focus(bool isFocused)
     {
         _isFocused = isFocused;
-        if (_currentState is IFocusable focusable)
-            focusable.Focus(isFocused);
+
+        if (_currentState is CharacterActionState character)
+            character.Focus(isFocused);
     }
 }

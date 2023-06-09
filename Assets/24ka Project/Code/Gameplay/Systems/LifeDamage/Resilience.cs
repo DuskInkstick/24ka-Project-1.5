@@ -2,7 +2,7 @@
 
 namespace Code.Gameplay.Systems.LifeDamage
 {
-    internal class Resilience
+    public class Resilience
     {
         public readonly ElementalResistance Resistance;
 
@@ -17,11 +17,13 @@ namespace Code.Gameplay.Systems.LifeDamage
         public event Action<ElementalAttributeType> StatusOverloaded;
         public event Action<int> Dead;
 
-        public Resilience(int health, ElementalAttribute activeStatus = null)
+        public Resilience(int health, ElementalAttribute activeStatus = null, int statusOverloadLimit = 10)
         {
-            Health = health;
             Resistance = new ElementalResistance();
+            Health = health;
+
             _activeStatus = activeStatus;
+            _statusOverloadLimit = statusOverloadLimit;
         }
         
         public CausedDamage ApplyDamage(CausedDamage damage)

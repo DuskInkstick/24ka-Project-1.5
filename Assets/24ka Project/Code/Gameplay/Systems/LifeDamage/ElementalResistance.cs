@@ -2,7 +2,7 @@
 
 namespace Code.Gameplay.Systems.LifeDamage
 {
-    internal class ElementalResistance
+    public class ElementalResistance
     {
         private readonly List<(ElementalAttributeType type, int strenght)> _resistances;
         public IEnumerable<(ElementalAttributeType type, int strenght)> Resistances => _resistances;

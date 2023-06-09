@@ -1,29 +1,35 @@
-﻿using Code.Gameplay.State;
-using Code.Gameplay.Systems;
+﻿using Code.Gameplay.Systems;
+using Code.Gameplay.Systems.Attack;
+using Code.Gameplay.Systems.LifeDamage;
 using Code.Interfaces.Architecture;
-using Code.Interfaces.Gameplay;
 using UnityEngine;
 
 namespace Code.Gameplay.Player.Character.States
 {
-    internal class WalkState : MoveState, IFocusable
+    internal class WalkState : CharacterActionState
     {
-        public WalkState(IStateSwitcher switcher, Transform transform, float speed, Animator animator)
-            : base(
-                  switcher,
-                  new Movement(transform, speed), 
-                  new FourSideAnimation(animator, "walk_up", "walk_down", "walk_left", "walk_right")) 
-        {  }
+        public WalkState(IStateSwitcher switcher,
+                            Animator animator,
+                            Resilience resilience,
+                            Transform transform,
+                            float speed,
+                            AttackBehavior attackBehavior)
+              : base(switcher,
+                     new FourSideAnimation(animator, "walk_up", "walk_down", "walk_left", "walk_right"),
+                     resilience,
+                     new Movement(transform, speed),
+                     attackBehavior)
+        { }
 
-        public void Focus(bool isFocused)
+        public override void Focus(bool isFocused)
         {
-            if (isFocused)
+            if (isFocused == true)
                 StateSwitcher.SwitchState<FocusState>();
         }
 
         protected override void OnMoveStoped()
         {
-            StateSwitcher.SwitchState<IdleState>();
+            StateSwitcher.SwitchState<QuiescentState>();
         }
     }
 }

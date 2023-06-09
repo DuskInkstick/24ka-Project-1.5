@@ -2,7 +2,7 @@
 
 namespace Code.Gameplay.Systems
 {
-    internal class Movement
+    public class Movement
     {
         private Transform _transform;
         private float _speed;
