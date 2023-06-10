@@ -21,7 +21,7 @@ namespace Code.Gameplay.State
         private readonly bool _canAttack;
 
         public Resilience Resilience { get; private set; }
-        public Vector2 ViewVector { get; private set; } // Can't be None (Zero)
+        public Vector2 ViewVector { get; private set; } = Vector2.down; // Can't be None (Zero)
         protected Vector2 LookVector { get; private set; } = Vector2.zero;
         protected Vector2 MoveVector { get; private set; } = Vector2.zero;
 

@@ -1,3 +1,4 @@
+using Code.Gameplay.Player.Abilities.IceWall;
 using Code.Gameplay.Player.Character.Buttle;
 using Code.Gameplay.Player.Character.States;
 using Code.Gameplay.State;
@@ -17,6 +18,8 @@ using UnityEngine.EventSystems;
 public class Character : MonoBehaviour, IStateSwitcher
 {
     [SerializeField] private Bullet _attack;
+    [SerializeField] private IceWall _horizontalWall;
+    [SerializeField] private IceWall _verticalWall;
 
     private CharacterInput _input;
     private Animator _animator;
@@ -60,11 +63,13 @@ public class Character : MonoBehaviour, IStateSwitcher
         var resilience = new Resilience(5, new ElementalAttribute(ElementalAttributeType.None, 0));
         resilience.Resistance.Add(ElementalAttributeType.Ice, 2);
 
+        var icePlacer = new IcePlacer(transform, _horizontalWall, _verticalWall);
+
         _states = new List<CreatureStateBase>()
         {
-            new QuiescentState(this, _animator, resilience, attackBehavior),
+            new QuiescentState(this, _animator, resilience, attackBehavior, icePlacer),
             new WalkState(this,  _animator, resilience, transform, 7f, attackBehavior),
-            new FocusState(this,  _animator, resilience, transform, 3f, attackBehavior)
+            new FocusState(this,  _animator, resilience, transform, 3f, attackBehavior, icePlacer)
         };
         _currentState = _states[0];
     }
@@ -74,6 +79,8 @@ public class Character : MonoBehaviour, IStateSwitcher
         _input.MovementVectorChanged += SetMovemetnDirection;
         _input.ViewVectorChanged += SetViewDirection;
         _input.FocusChanged += Focus;
+        _input.DashOrBlock += Escape;
+        _input.LongBlock += PerformLongBlock;
     }
 
     private void Update()
@@ -88,6 +95,8 @@ public class Character : MonoBehaviour, IStateSwitcher
         _input.MovementVectorChanged -= SetMovemetnDirection;
         _input.ViewVectorChanged -= SetViewDirection;
         _input.FocusChanged -= Focus;
+        _input.DashOrBlock -= Escape;
+        _input.LongBlock -= PerformLongBlock;
     }
 
     private void SetMovemetnDirection(Vector2 direction)
@@ -119,5 +128,16 @@ public class Character : MonoBehaviour, IStateSwitcher
 
         if (_currentState is CharacterActionState character)
             character.Focus(isFocused);
+    }
+
+    private void Escape()
+    {
+        if (_currentState is CharacterActionState character)
+            character.UseEscapeSkill();
+    }
+
+    private void PerformLongBlock(bool performing)
+    {
+        Debug.Log("LongBlock " + performing);
     }
 }

@@ -1,4 +1,5 @@
-﻿using Code.Gameplay.Systems;
+﻿using Code.Gameplay.Player.Abilities.IceWall;
+using Code.Gameplay.Systems;
 using Code.Gameplay.Systems.Battle;
 using Code.Gameplay.Systems.Battle.AttackPerfomance;
 using Code.Interfaces.Architecture;
@@ -13,16 +14,20 @@ namespace Code.Gameplay.Player.Character.States
         // Subject to change 
         private bool _isFocused = false;
 
+        private readonly IcePlacer _icePlacer;
         public QuiescentState(IStateSwitcher switcher,
                            Animator animator,
                            Resilience resilience,
-                           AttackBehavior attackBehavior)
+                           AttackBehavior attackBehavior,
+                           IcePlacer icePlacer)
              : base(switcher,
                     new FourSideAnimation(animator, "idle_up", "idle_down", "idle_left", "idle_right"),
                     resilience,
                     null,
                     attackBehavior)
-        { }
+        {
+            _icePlacer = icePlacer;
+        }
 
         public override void Focus(bool isFocused)
         {
@@ -33,6 +38,14 @@ namespace Code.Gameplay.Player.Character.States
         {
             if(direction.ToMoveDirection() != MoveDirection.None)
                 StateSwitcher.SwitchState<WalkState>();
+        }
+
+        public override void UseEscapeSkill()
+        {
+            if(_isFocused)
+            {
+                _icePlacer.TryPlaceWall(ViewVector);
+            }
         }
     }
 }

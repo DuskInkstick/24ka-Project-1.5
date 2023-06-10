@@ -1,6 +1,7 @@
 ﻿using Code.Gameplay.Systems.Battle;
 using Code.Interfaces.Gameplay;
 using Code.Utils;
+using System.Collections;
 using UnityEngine;
 
 namespace Code.Gameplay.Player.Abilities.IceWall
@@ -8,6 +9,7 @@ namespace Code.Gameplay.Player.Abilities.IceWall
     public class IceWall : MonoBehaviour, IDamageable
     {
         [SerializeField] private ParticleSystem _hitEffect;
+        [SerializeField] private float _placeIceDelay = 0.5f;
 
         private Animator _animator;
         private IceWallPart[] _ice;
@@ -27,7 +29,7 @@ namespace Code.Gameplay.Player.Abilities.IceWall
 
         private void Start()
         {
-            _animator = GetComponent<Animator>();
+            _animator = GetComponentInChildren<Animator>();
             _ice = gameObject.GetComponentsInChildren<IceWallPart>();
 
             _resilience = new Resilience(6);
@@ -35,6 +37,7 @@ namespace Code.Gameplay.Player.Abilities.IceWall
             _breakingOrder = new int[_ice.Length];
 
             GenerateIce();
+            StartCoroutine(ShowIce());
         }
 
         private void BreakIce(int count)
@@ -67,6 +70,15 @@ namespace Code.Gameplay.Player.Abilities.IceWall
                 _breakingOrder[i] = i;
             }
             _breakingOrder.Shuffle();
+        }
+
+        private IEnumerator ShowIce()
+        {
+            for (int i = 0; i < _breakingOrder.Length; i++)
+            {
+                _ice[_breakingOrder[i]].Show();
+                yield return new WaitForSeconds(_placeIceDelay);
+            }
         }
     }
 }

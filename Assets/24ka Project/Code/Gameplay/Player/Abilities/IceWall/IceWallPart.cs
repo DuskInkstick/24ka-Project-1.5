@@ -16,10 +16,7 @@ namespace Code.Gameplay.Player.Abilities.IceWall
             set 
             {
                 if (value >= 0 && value <= 4)
-                {
                     _spriteIndex = value;
-                    Animate(_spriteIndex);
-                }
             }
         }
 
@@ -37,13 +34,13 @@ namespace Code.Gameplay.Player.Abilities.IceWall
             {4, "ice9_normal" },
         };
 
+        public void Show() => _animator.Play(_animations[_spriteIndex]);
+
         private void Awake()
         {
             _animator = GetComponent<Animator>();
             SetBroken(false);
         }
-
-        private void Animate(int index) => _animator.Play(_animations[index]);
         
         private void SetBroken(bool value) => _animator.SetBool("IsBroken", value);
     }

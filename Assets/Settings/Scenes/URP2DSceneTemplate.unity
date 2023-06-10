@@ -135,7 +135,6 @@ GameObject:
   - component: {fileID: 236964607}
   - component: {fileID: 236964606}
   - component: {fileID: 236964609}
-  - component: {fileID: 236964610}
   m_Layer: 0
   m_Name: Square
   m_TagString: Untagged
@@ -257,20 +256,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!114 &236964610
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 236964605}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9179c8e01d2e2004ab681ac7384a9c1e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _damage: 0
-  _attackAttribute: 0
 --- !u!1001 &482090124
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -783,6 +768,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _attack: {fileID: 5024974985669424297, guid: e0f59a94fcf067b43915bafa49b40dda, type: 3}
+  _horizontalWall: {fileID: 2401193331085330435, guid: 5d5232c97f58d484dab695b962905cc0, type: 3}
+  _verticalWall: {fileID: 6994151634397541058, guid: 2207b8558e769c340abd5ef9d72cc615, type: 3}
 --- !u!114 &1901081755
 MonoBehaviour:
   m_ObjectHideFlags: 0
