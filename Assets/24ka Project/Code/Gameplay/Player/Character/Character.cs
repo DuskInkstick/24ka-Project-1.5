@@ -68,8 +68,9 @@ public class Character : MonoBehaviour, IStateSwitcher
         _states = new List<CreatureStateBase>()
         {
             new QuiescentState(this, _animator, resilience, attackBehavior, icePlacer),
-            new WalkState(this,  _animator, resilience, transform, 7f, attackBehavior),
-            new FocusState(this,  _animator, resilience, transform, 3f, attackBehavior, icePlacer)
+            new WalkState(this, _animator, resilience, transform, 7f, attackBehavior),
+            new FocusState(this, _animator, resilience, transform, 3f, attackBehavior, icePlacer),
+            new DashState(this, _animator, resilience, transform, 12f)
         };
         _currentState = _states[0];
     }

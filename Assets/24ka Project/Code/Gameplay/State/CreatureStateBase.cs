@@ -21,9 +21,9 @@ namespace Code.Gameplay.State
         private readonly bool _canAttack;
 
         public Resilience Resilience { get; private set; }
-        public Vector2 ViewVector { get; private set; } = Vector2.down; // Can't be None (Zero)
-        protected Vector2 LookVector { get; private set; } = Vector2.zero;
-        protected Vector2 MoveVector { get; private set; } = Vector2.zero;
+        public Vector2 ViewVector { get; set; } = Vector2.down;
+        protected Vector2 LookVector { get; set; } = Vector2.zero;
+        protected Vector2 MoveVector { get; set; } = Vector2.zero;
 
         protected CreatureStateBase(IStateSwitcher stateSwitcher,
                                     FourSideAnimation animation,

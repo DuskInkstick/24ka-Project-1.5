@@ -46,6 +46,10 @@ namespace Code.Gameplay.Player.Character.States
             {
                 _icePlacer.TryPlaceWall(ViewVector);
             }
+            else
+            {
+                StateSwitcher.SwitchState<DashState>();
+            }
         }
     }
 }

@@ -31,5 +31,10 @@ namespace Code.Gameplay.Player.Character.States
         {
             StateSwitcher.SwitchState<QuiescentState>();
         }
+
+        public override void UseEscapeSkill()
+        {
+            StateSwitcher.SwitchState<DashState>();
+        }
     }
 }
