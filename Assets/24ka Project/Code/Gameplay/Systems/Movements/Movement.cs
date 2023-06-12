@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Code.Gameplay.Systems
+namespace Code.Gameplay.Systems.Movements
 {
     public class Movement
     {

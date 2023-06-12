@@ -1,25 +1,29 @@
-﻿using Code.Gameplay.Player.Character.Battle;
+﻿using Code.Gameplay.Player.Battle;
 using Code.Gameplay.Systems.Battle.AttackingObjects;
 using Code.Gameplay.Systems.Battle.AttackPerfomance;
 using UnityEngine;
 
-namespace Code.Gameplay.Player.Character.Buttle
+namespace Code.Gameplay.Player.Buttle
 {
-    internal class CharacterAttackBehavior : AttackBehavior
+    public class CharacterAttackBehavior : AttackBehavior
     {
-        private readonly float _attackInterval = 0.25f;
+        public readonly float AttackInterval = 0.25f;
+
         private float _attackIntervalTimer = 0f;
         private bool _canAttack = true;
 
-        public CharacterAttackBehavior(Transform ovner, Bullet tearTemplate) : base(ovner)
+        public CharacterAttackBehavior(Transform ovner, Vector2 spawnOffset, Bullet tearTemplate) : base(ovner, 0)
         {
-            AttackPatterns.Add(new NormalAttackPattern(ovner, tearTemplate));
+            AttackPatterns.Add(new NormalAttackPattern(ovner, spawnOffset, tearTemplate, 0));
         }
 
-        public override bool Attack(Vector2 direction)
+        public override bool Attack(Vector2 direction, int note = 0)
         {
-            if(_canAttack)
+
+            if (_canAttack)
             {
+                OnAttacking(note);
+
                 AttackPatterns[0].Attack(direction);
                 _canAttack = false;
                 return true;
@@ -35,7 +39,7 @@ namespace Code.Gameplay.Player.Character.Buttle
                 return;
 
             _attackIntervalTimer += deltaTime;
-            if(_attackIntervalTimer >= _attackInterval)
+            if(_attackIntervalTimer >= AttackInterval)
             {
                 _canAttack = true;
                 _attackIntervalTimer = 0f;

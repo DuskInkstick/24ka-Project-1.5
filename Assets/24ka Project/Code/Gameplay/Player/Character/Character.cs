@@ -1,12 +1,12 @@
 using Code.Gameplay.Player.Abilities.IceWall;
-using Code.Gameplay.Player.Character.Buttle;
 using Code.Gameplay.Player.Character.States;
+using Code.Gameplay.Player.Weapons;
 using Code.Gameplay.State;
 using Code.Gameplay.Systems.Battle;
-using Code.Gameplay.Systems.Battle.AttackingObjects;
 using Code.Gameplay.Systems.Battle.Elementals;
 using Code.Gameplay.Systems.Battle.Enums;
 using Code.Interfaces.Architecture;
+using Code.Interfaces.Gameplay;
 using Code.Utils;
 using System;
 using System.Collections.Generic;
@@ -15,9 +15,9 @@ using UnityEngine.EventSystems;
 
 [RequireComponent(typeof(CharacterInput))]
 [RequireComponent(typeof(Rigidbody2D))]
-public class Character : MonoBehaviour, IStateSwitcher
+public class Character : MonoBehaviour, IStateSwitcher, IDamageable
 {
-    [SerializeField] private Bullet _attack;
+    [SerializeField] private Staff _staff;
     [SerializeField] private IceWall _horizontalWall;
     [SerializeField] private IceWall _verticalWall;
 
@@ -32,6 +32,8 @@ public class Character : MonoBehaviour, IStateSwitcher
     private Vector2 _lastViewVector;
 
     private bool _isFocused = false;
+
+    public int AllyGroup => 0;
 
     public void SwitchState<T>() where T : CreatureStateBase
     {
@@ -50,15 +52,21 @@ public class Character : MonoBehaviour, IStateSwitcher
         Focus(_isFocused);
     }
 
+    public CausedDamage ApplyDamage(CausedDamage damage)
+    {
+        return _currentState.ApplyDamage(damage);
+    }
+
     private void Awake()
     {
         _input = GetComponent<CharacterInput>();
         _animator = GetComponent<Animator>();
+
+        _staff.Owner = transform;
     }
 
     private void Start()
     {
-        var attackBehavior = new CharacterAttackBehavior(transform, _attack);
 
         var resilience = new Resilience(5, new ElementalAttribute(ElementalAttributeType.None, 0));
         resilience.Resistance.Add(ElementalAttributeType.Ice, 2);
@@ -67,9 +75,9 @@ public class Character : MonoBehaviour, IStateSwitcher
 
         _states = new List<CreatureStateBase>()
         {
-            new QuiescentState(this, _animator, resilience, attackBehavior, icePlacer),
-            new WalkState(this, _animator, resilience, transform, 7f, attackBehavior),
-            new FocusState(this, _animator, resilience, transform, 3f, attackBehavior, icePlacer),
+            new QuiescentState(this, _animator, resilience, _staff.AttackBehavior, icePlacer),
+            new WalkState(this, _animator, resilience, transform, 7f, _staff.AttackBehavior),
+            new FocusState(this, _animator, resilience, transform, 3f, _staff.AttackBehavior, icePlacer),
             new DashState(this, _animator, resilience, transform, 12f)
         };
         _currentState = _states[0];

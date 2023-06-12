@@ -8,6 +8,7 @@ namespace Code.Gameplay.Player.Abilities.IceWall
 {
     public class IceWall : MonoBehaviour, IDamageable
     {
+        [SerializeField] private int _allyGroup = 0;
         [SerializeField] private ParticleSystem _hitEffect;
         [SerializeField] private float _placeIceDelay = 0.5f;
 
@@ -17,6 +18,8 @@ namespace Code.Gameplay.Player.Abilities.IceWall
 
         private int[] _breakingOrder;
         private int _breakeIndex = -1;
+
+        public int AllyGroup => _allyGroup;
 
         public CausedDamage ApplyDamage(CausedDamage damage)
         {

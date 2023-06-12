@@ -655,6 +655,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b379d0b2f5d28640a712c22eb9d2804, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _allyGroup: 1
   _hitEffect: {fileID: 3506769292363374980, guid: 83d5e55b4a856c248a3c73599efcda5c, type: 3}
   _placeIceDelay: 0.1
 --- !u!50 &980923209661645268

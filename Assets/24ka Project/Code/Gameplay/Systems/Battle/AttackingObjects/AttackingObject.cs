@@ -20,6 +20,7 @@ namespace Code.Gameplay.Systems.Battle.AttackingObjects
         private float _lifeTimeTimer = 0f;
 
         public int Id => _id;
+        public int AllyGroup { get; set; }
         public Vector2 Direction { get; set; }
         public float LifeTime { get; set; }
 
@@ -57,6 +58,9 @@ namespace Code.Gameplay.Systems.Battle.AttackingObjects
         {
             if (collision.gameObject.TryGetComponent<IDamageable>(out var damageable))
             {
+                if (damageable.AllyGroup == AllyGroup)
+                    return;
+
                 _damagingAction.Damage(damageable, transform.position);
             }
         }

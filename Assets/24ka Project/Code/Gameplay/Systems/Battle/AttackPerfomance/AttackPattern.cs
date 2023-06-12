@@ -6,13 +6,16 @@ namespace Code.Gameplay.Systems.Battle.AttackPerfomance
 {
     public abstract class AttackPattern
     {
+        private int _allyGroup;
+
         protected Transform SpawnPoint;
         protected List<AttackingObject> AttackingObjects;
 
-        public AttackPattern(Transform spawnPoint)
+        public AttackPattern(Transform spawnPoint, int allyGroup)
         {
             SpawnPoint = spawnPoint;
             AttackingObjects = new List<AttackingObject>();
+            _allyGroup = allyGroup;
         }
 
         public virtual void Attack(Vector2 direction)
