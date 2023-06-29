@@ -6,25 +6,34 @@ namespace Code.Gameplay.Systems.Battle.AttackPerfomance
 {
     public abstract class AttackPattern
     {
-        private int _allyGroup;
+        public int AllyGroup { get; set; }
+        public Vector2 SpawnOffset { get; set; } = Vector2.zero;
 
-        protected Transform SpawnPoint;
-        protected List<AttackingObject> AttackingObjects;
+        protected readonly Transform SpawnPoint;
+        protected readonly List<AttackingObject> AttackingObjects;
 
-        public AttackPattern(Transform spawnPoint, int allyGroup)
+        protected AttackPattern(Transform spawnPoint, List<AttackingObject> attackings)
         {
             SpawnPoint = spawnPoint;
-            AttackingObjects = new List<AttackingObject>();
-            _allyGroup = allyGroup;
+            AttackingObjects = attackings;
         }
 
-        public virtual void Attack(Vector2 direction)
+        public abstract void Attack(Vector2 direction);
+
+        public virtual void Update() { }
+
+        protected AttackingObject SubmitAttackingObject(
+            int index, 
+            Vector2 spawnPoint,
+            Quaternion rotation, 
+            float lifeTime)
         {
-            var attacking = GameObject.Instantiate(AttackingObjects[0], SpawnPoint.position, Quaternion.identity);
-            attacking.LifeTime = 5f;
-            attacking.Direction = direction;
+            var attacking = GameObject.Instantiate(AttackingObjects[index],
+                                                   spawnPoint + SpawnOffset,
+                                                   rotation);
+            attacking.LifeTime = lifeTime;
+            attacking.AllyGroup = AllyGroup;
+            return attacking;
         }
-
-        public virtual void Update(float deltTime) { }
     }
 }

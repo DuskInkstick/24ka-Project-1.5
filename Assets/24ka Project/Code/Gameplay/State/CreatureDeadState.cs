@@ -7,7 +7,7 @@ namespace Code.Gameplay.State
 {
     internal abstract class CreatureDeadState : CreatureStateBase
     {
-        public CreatureDeadState(IStateSwitcher stateSwitcher,
+        protected CreatureDeadState(IStateSwitcher stateSwitcher,
                                  FourSideAnimation animation,
                                  Resilience resilience)
             : base(stateSwitcher, animation, resilience) { }
@@ -18,9 +18,9 @@ namespace Code.Gameplay.State
             Resilience.StatusOverloaded += OnStatusOverloaded;
         }
 
-        public override void Update(float deltaTime)
+        public override void Update()
         {
-            Resilience.Update(deltaTime);
+            Resilience.Update();
         }
 
         public override void Stop()

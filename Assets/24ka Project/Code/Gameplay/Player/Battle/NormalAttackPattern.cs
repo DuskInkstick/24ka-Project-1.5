@@ -1,5 +1,6 @@
 ﻿using Code.Gameplay.Systems.Battle.AttackingObjects;
 using Code.Gameplay.Systems.Battle.AttackPerfomance;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Code.Gameplay.Player.Battle
@@ -8,8 +9,8 @@ namespace Code.Gameplay.Player.Battle
     {
         private readonly Vector3 _spawnOffset;
 
-        public NormalAttackPattern(Transform spawnPoint, Vector2 offset, Bullet tear, int allyGroup) 
-            : base(spawnPoint, allyGroup)
+        public NormalAttackPattern(Transform spawnPoint, Vector2 offset, Bullet tear)
+            : base(spawnPoint, new List<AttackingObject>() { tear })
         {
             AttackingObjects.Add(tear);
             _spawnOffset = offset;
@@ -17,9 +18,12 @@ namespace Code.Gameplay.Player.Battle
 
         public override void Attack(Vector2 direction)
         {
-            var attacking = GameObject.Instantiate(AttackingObjects[0],
-                                                   SpawnPoint.position + _spawnOffset,
-                                                   Quaternion.identity);
+            var attacking = SubmitAttackingObject(0, 
+                SpawnPoint.position + _spawnOffset, 
+                Quaternion.identity,
+                5f);
+
+            attacking.Speed = 5f;
             attacking.LifeTime = 5f;
             attacking.Direction = direction;
         }

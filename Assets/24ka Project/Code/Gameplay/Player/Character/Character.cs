@@ -63,6 +63,7 @@ public class Character : MonoBehaviour, IStateSwitcher, IDamageable
         _animator = GetComponent<Animator>();
 
         _staff.Owner = transform;
+        _staff.AllyGroup = AllyGroup;
     }
 
     private void Start()
@@ -96,7 +97,7 @@ public class Character : MonoBehaviour, IStateSwitcher, IDamageable
     {
         Move(_moveVector);
         LookAndAttack(_lookVector);
-        _currentState.Update(Time.deltaTime);
+        _currentState.Update();
     }
 
     private void OnDisable()

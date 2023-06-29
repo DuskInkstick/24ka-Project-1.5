@@ -1,6 +1,7 @@
 ﻿using Code.Gameplay.Systems.Battle.Elementals;
 using Code.Gameplay.Systems.Battle.Enums;
 using System;
+using UnityEngine;
 
 namespace Code.Gameplay.Systems.Battle
 {
@@ -66,9 +67,12 @@ namespace Code.Gameplay.Systems.Battle
             };
         }
 
-        public void Update(float deltaTime)
+        public void Update()
         {
-            _weakenStatusTimer += deltaTime;
+            if (_activeStatus == null)
+                return;
+
+            _weakenStatusTimer += Time.deltaTime;
             if(_weakenStatusTimer > _weakenStatusTime)
             {
                 _weakenStatusTimer = 0f;

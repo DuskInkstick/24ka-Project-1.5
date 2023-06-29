@@ -51,15 +51,15 @@ namespace Code.Gameplay.State
             Resilience.Dead += OnDead;
         }
 
-        public virtual void Update(float deltaTime)
+        public virtual void Update()
         {
             if(_canMove && MoveVector.ToMoveDirection() != MoveDirection.None)
-                _movement.Move(MoveVector, deltaTime);
+                _movement.Move(MoveVector);
 
             if (_canAttack)
-                _attackBehavior.Update(deltaTime);
+                _attackBehavior.Update();
 
-            Resilience.Update(deltaTime);
+            Resilience.Update();
         }
 
         public virtual void Stop()

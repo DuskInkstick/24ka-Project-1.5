@@ -9,24 +9,24 @@ namespace Code.Utils
         {
             var edge = 0.6f;
 
-            MoveDirection moveDirection;
-
             if (vector2.y > edge)
-                moveDirection = MoveDirection.Up;
+                return MoveDirection.Up;
 
             else if (vector2.y < -edge)
-                moveDirection = MoveDirection.Down;
+                return MoveDirection.Down;
 
             else if (vector2.x > edge)
-                moveDirection = MoveDirection.Right;
+                return MoveDirection.Right;
 
             else if (vector2.x < -edge)
-                moveDirection = MoveDirection.Left;
+                return MoveDirection.Left;
 
-            else
-                moveDirection = MoveDirection.None;
+            return MoveDirection.None;
+        }
 
-            return moveDirection;
+        public static Vector2 GetRandom()
+        {
+            return new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f));
         }
     }
 }

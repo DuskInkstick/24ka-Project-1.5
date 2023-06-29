@@ -33,11 +33,11 @@ namespace Code.Gameplay.Player.Character.States
             base.Start();
         }
 
-        public override void Update(float deltaTime)
+        public override void Update()
         {
-            base.Update(deltaTime);
+            base.Update();
 
-            _dashTimer += deltaTime;
+            _dashTimer += Time.deltaTime;
             if (_dashTimer > _dashTime)
                 StateSwitcher.SwitchState<WalkState>();
         }

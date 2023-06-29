@@ -13,9 +13,9 @@ namespace Code.Gameplay.Systems.Movements
             _transform = transform;
         }
 
-        public virtual void Move(Vector2 direction, float deltaTime)
+        public virtual void Move(Vector2 direction)
         {
-            _transform.Translate(direction * _speed * deltaTime);
+            _transform.Translate(direction * _speed * Time.deltaTime, Space.World);
         }
     }
 }

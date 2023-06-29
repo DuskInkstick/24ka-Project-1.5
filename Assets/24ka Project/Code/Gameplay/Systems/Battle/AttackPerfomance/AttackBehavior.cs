@@ -7,26 +7,35 @@ namespace Code.Gameplay.Systems.Battle.AttackPerfomance
     public abstract class AttackBehavior
     {
         private int _allyGroup;
+        public int AllyGroup
+        {
+            get => _allyGroup;
+            set
+            {
+                _allyGroup = value;
+                foreach (var attack in AttackSet)
+                    attack.AllyGroup = _allyGroup;
+            }
+        }
 
-        protected readonly List<AttackPattern> AttackPatterns;
+        protected readonly List<AttackPattern> AttackSet;
         protected readonly Transform Ovner;
 
         public event Action<int> Attacking;
         public event Action<int> Attacked;
 
-        protected AttackBehavior(Transform ovner, int allyGroup)
+        protected AttackBehavior(Transform ovner, List<AttackPattern> attacks)
         {
             Ovner = ovner;
-            AttackPatterns = new List<AttackPattern>();
-            _allyGroup = allyGroup;
+            AttackSet = attacks;
         }
 
         public abstract bool Attack(Vector2 direction, int note = 0);
 
-        public virtual void Update(float deltaTime)
+        public virtual void Update() 
         {
-            foreach (var pattern in AttackPatterns)
-                pattern.Update(deltaTime);
+            foreach (var pattern in AttackSet)
+                pattern.Update();
         }
 
         protected void OnAttacking(int attackNote)

@@ -26,6 +26,7 @@ namespace Code.Gameplay.Player.Weapons
         {
             _animation = GetComponentInChildren<StaffAnimationController>();
             _movement = new FollowingMovement(transform, Owner);
+            AttackBehavior.AllyGroup = AllyGroup;
         }
 
         private void OnEnable()

@@ -2,6 +2,7 @@
 using Code.Gameplay.Systems.Battle.Elementals;
 using Code.Gameplay.Systems.Battle.Enums;
 using Code.Interfaces.Gameplay;
+using Code.Utils;
 using UnityEngine;
 
 namespace Code.Gameplay.Systems.Battle.AttackingObjects
@@ -17,33 +18,29 @@ namespace Code.Gameplay.Systems.Battle.AttackingObjects
         [SerializeField] private AttackingActionType _attackingActionType;
 
         private DamagingAction _damagingAction;
+        private float _lifeTime = 0.1f;
         private float _lifeTimeTimer = 0f;
 
         public int Id => _id;
-        public int AllyGroup { get; set; }
-        public Vector2 Direction { get; set; }
-        public float LifeTime { get; set; }
+        public int AllyGroup { get; set; } = 1;
+        public Vector2 Direction { get; set; } = Vector2.up;
+        public float Speed { get; set; } = 1f;
+        public float LifeTime
+        {
+            get => _lifeTime;
+            set
+            {
+                if(value > 0.1f)
+                    _lifeTime = value;
+            }
+        }
 
         protected virtual void Start()
         {
             var attribute = new ElementalAttribute(_attackAttribute, _attributeStrenght);
-            switch (_attackingActionType)
-            {
-                case AttackingActionType.Normal:
-                    _damagingAction = new DamagingAction(_damage, attribute);
-                    break;
-                case AttackingActionType.Penetrated:
-                    _damagingAction = new PenetratedDamagingAction(_damage, attribute);
-                    break;
-                case AttackingActionType.Constant:
-                    _damagingAction = new ConstantDamagingAction(_damage, attribute);
-                    break;
-            }
-
+         
+            _damagingAction = _attackingActionType.GetDamagingAction(_damage, attribute);
             _damagingAction.Complited += DestroyIt;
-
-            if (LifeTime < 0.2f)
-                LifeTime = 0.2f;
         }
 
         protected virtual void Update()
