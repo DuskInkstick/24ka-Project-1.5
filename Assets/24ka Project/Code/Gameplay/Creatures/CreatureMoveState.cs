@@ -12,10 +12,9 @@ namespace Code.Gameplay.Creatures
     {
         public CreatureMoveState(IStateSwitcher stateSwitcher,
                                  FourSideAnimation animation,
-                                 Resilience resilience,
                                  Movement movement = null,
                                  AttackBehavior attackBehavior = null)
-            : base(stateSwitcher, animation, resilience, movement, attackBehavior)
+            : base(stateSwitcher, animation, movement, attackBehavior)
         {
         }
     }

@@ -27,9 +27,10 @@ public class Character : MonoBehaviour, IStateSwitcher, IDamageable
     private List<CreatureStateBase> _states;
     private CreatureStateBase _currentState;
 
+    private Resilience _resilience;
+
     private Vector2 _moveVector;
     private Vector2 _lookVector;
-    private Vector2 _lastViewVector;
 
     private bool _isFocused = false;
 
@@ -42,19 +43,20 @@ public class Character : MonoBehaviour, IStateSwitcher, IDamageable
         if (newState == null)
             throw new InvalidOperationException($"Character does not contain the state: {typeof(T).Name}");
        
-        _lastViewVector = _currentState.ViewVector;
+        var lastViewVector = _currentState.ViewVector;
         _currentState.Stop();
 
         _currentState = newState;
         _currentState.Start();
 
-        _currentState.LookIn(_lastViewVector);
+        _currentState.LookIn(lastViewVector);
+
         Focus(_isFocused);
     }
 
     public CausedDamage ApplyDamage(CausedDamage damage)
     {
-        return _currentState.ApplyDamage(damage);
+        return _currentState.ApplyDamage(damage, _resilience);
     }
 
     private void Awake()
@@ -68,26 +70,28 @@ public class Character : MonoBehaviour, IStateSwitcher, IDamageable
 
     private void Start()
     {
+        _resilience = new Resilience(5, new ElementalAttribute(ElementalAttributeType.None, 0));
+        _resilience.Resistance.Add(ElementalAttributeType.Ice, 2);
 
-        var resilience = new Resilience(5, new ElementalAttribute(ElementalAttributeType.None, 0));
-        resilience.Resistance.Add(ElementalAttributeType.Ice, 2);
+        _resilience.StatusOverloaded += OnStatusOverloaded;
+        _resilience.Dead += OnDead;
 
         var icePlacer = new IcePlacer(transform, _horizontalWall, _verticalWall);
 
         _states = new List<CreatureStateBase>()
         {
-            new QuiescentState(this, _animator, resilience, _staff.AttackBehavior, icePlacer),
-            new WalkState(this, _animator, resilience, transform, 7f, _staff.AttackBehavior),
-            new FocusState(this, _animator, resilience, transform, 3f, _staff.AttackBehavior, icePlacer),
-            new DashState(this, _animator, resilience, transform, 12f)
+            new QuiescentState(this, _animator, _staff.AttackBehavior, icePlacer),
+            new WalkState(this, _animator, transform, 7f, _staff.AttackBehavior),
+            new FocusState(this, _animator, transform, 3f, _staff.AttackBehavior, icePlacer),
+            new DashState(this, _animator, transform, 12f)
         };
         _currentState = _states[0];
     }
 
     private void OnEnable()
     {
-        _input.MovementVectorChanged += SetMovemetnDirection;
-        _input.ViewVectorChanged += SetViewDirection;
+        _input.MovementVectorChanged += SetMovemetnVector;
+        _input.LookVectorChanged += SetLookVector;
         _input.FocusChanged += Focus;
         _input.DashOrBlock += Escape;
         _input.LongBlock += PerformLongBlock;
@@ -95,41 +99,38 @@ public class Character : MonoBehaviour, IStateSwitcher, IDamageable
 
     private void Update()
     {
-        Move(_moveVector);
-        LookAndAttack(_lookVector);
+        _currentState.MoveIn(_moveVector);
+        _currentState.LookIn(_lookVector);
+
+        if (_lookVector.ToMoveDirection() != MoveDirection.None)
+            _currentState.Attack();
+
         _currentState.Update();
     }
 
     private void OnDisable()
     {
-        _input.MovementVectorChanged -= SetMovemetnDirection;
-        _input.ViewVectorChanged -= SetViewDirection;
+        _input.MovementVectorChanged -= SetMovemetnVector;
+        _input.LookVectorChanged -= SetLookVector;
         _input.FocusChanged -= Focus;
         _input.DashOrBlock -= Escape;
         _input.LongBlock -= PerformLongBlock;
     }
 
-    private void SetMovemetnDirection(Vector2 direction)
+    private void OnDestroy()
+    {
+        _resilience.StatusOverloaded -= OnStatusOverloaded;
+        _resilience.Dead -= OnDead;
+    }
+
+    private void SetMovemetnVector(Vector2 direction)
     {
         _moveVector = direction;
     }
 
-    private void SetViewDirection(Vector2 direction)
+    private void SetLookVector(Vector2 direction)
     {
         _lookVector = direction;
-    }
-
-    private void Move(Vector2 direction)
-    {
-        _currentState.MoveIn(direction);
-    }
-
-    private void LookAndAttack(Vector2 direction)
-    {
-        _currentState.LookIn(direction);
-
-        if(direction.ToMoveDirection() != MoveDirection.None)
-            _currentState.Attack();
     }
 
     private void Focus(bool isFocused)
@@ -149,5 +150,15 @@ public class Character : MonoBehaviour, IStateSwitcher, IDamageable
     private void PerformLongBlock(bool performing)
     {
         Debug.Log("LongBlock " + performing);
+    }
+
+    private void OnStatusOverloaded(ElementalAttributeType status)
+    {
+        _currentState.OnStatusOverloaded(status);
+    }
+
+    private void OnDead(int deadDamage)
+    {
+        _currentState.OnDead(deadDamage);
     }
 }

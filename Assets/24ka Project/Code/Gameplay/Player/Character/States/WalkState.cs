@@ -1,5 +1,4 @@
 ﻿using Code.Gameplay.Systems;
-using Code.Gameplay.Systems.Battle;
 using Code.Gameplay.Systems.Battle.AttackPerfomance;
 using Code.Gameplay.Systems.Movements;
 using Code.Interfaces.Architecture;
@@ -11,13 +10,11 @@ namespace Code.Gameplay.Player.Character.States
     {
         public WalkState(IStateSwitcher switcher,
                             Animator animator,
-                            Resilience resilience,
                             Transform transform,
                             float speed,
                             AttackBehavior attackBehavior)
               : base(switcher,
                      new FourSideAnimation(animator, "walk_up", "walk_down", "walk_left", "walk_right"),
-                     resilience,
                      new Movement(transform, speed),
                      attackBehavior)
         { }

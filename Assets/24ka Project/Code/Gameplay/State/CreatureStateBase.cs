@@ -21,19 +21,16 @@ namespace Code.Gameplay.State
         private readonly bool _canMove;
         private readonly bool _canAttack;
 
-        public Resilience Resilience { get; private set; }
-        public Vector2 ViewVector { get; set; } = Vector2.down;
+        public Vector2 ViewVector { get; private set; } = Vector2.down;
         protected Vector2 LookVector { get; set; } = Vector2.zero;
         protected Vector2 MoveVector { get; set; } = Vector2.zero;
 
         protected CreatureStateBase(IStateSwitcher stateSwitcher,
                                     FourSideAnimation animation,
-                                    Resilience resilience,
                                     Movement movement = null,
                                     AttackBehavior attackBehavior = null)
         {
             StateSwitcher = stateSwitcher;
-            Resilience = resilience;
 
             _animation = animation;
             _movement = movement;
@@ -46,38 +43,35 @@ namespace Code.Gameplay.State
         public virtual void Start() 
         {
             CleanAnimateState();
-
-            Resilience.StatusOverloaded += OnStatusOverloaded;
-            Resilience.Dead += OnDead;
+            LookVector = Vector2.zero;
+            MoveVector = Vector2.zero;
         }
 
         public virtual void Update()
         {
-            if(_canMove && MoveVector.ToMoveDirection() != MoveDirection.None)
+            if (_canMove && MoveVector.ToMoveDirection() != MoveDirection.None)
                 _movement.Move(MoveVector);
 
             if (_canAttack)
                 _attackBehavior.Update();
-
-            Resilience.Update();
-        }
-
-        public virtual void Stop()
-        {
-            Resilience.StatusOverloaded -= OnStatusOverloaded;
-            Resilience.Dead -= OnDead;
         }
 
         public virtual void Attack()
         {
-            if (_canAttack == false)
-                return;
+            if (_canAttack)
+                _attackBehavior.Attack(ViewVector);
+        }
 
-            _attackBehavior.Attack(ViewVector);
+        public virtual CausedDamage ApplyDamage(CausedDamage damage, Resilience resilience)
+        {
+            return resilience.ApplyDamage(damage);
         }
 
         public virtual void LookIn(Vector2 direction)
         {
+            if (LookVector.Equals(direction))
+                return;
+
             LookVector = direction;
             ViewVector = CalcViewVector();
             Animate();
@@ -88,18 +82,22 @@ namespace Code.Gameplay.State
             if (_canMove == false)
                 return;
 
+            if (direction.ToMoveDirection() == MoveDirection.None)
+                OnMoveStoped();
+
+            if (MoveVector.Equals(direction))
+                return;
+
             MoveVector = direction;
             ViewVector = CalcViewVector();
             Animate();
-
-            if (direction.ToMoveDirection() == MoveDirection.None)
-                OnMoveStoped();
         }
 
-        public CausedDamage ApplyDamage(CausedDamage damage)
-        {
-            return Resilience.ApplyDamage(damage);
-        }
+        public virtual void OnStatusOverloaded(ElementalAttributeType status) { }
+
+        public virtual void OnDead(int deadDamage) { }
+
+        public virtual void Stop() { }
 
         protected virtual Vector2 CalcViewVector()
         {
@@ -113,10 +111,6 @@ namespace Code.Gameplay.State
         }
 
         protected virtual void OnMoveStoped() { }
-
-        protected virtual void OnStatusOverloaded(ElementalAttributeType status) { }
-
-        protected virtual void OnDead(int deadDamage) { }
 
         protected void Animate()
         {

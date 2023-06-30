@@ -9,8 +9,8 @@ namespace Code.Gameplay.Systems.Battle
     {
         public readonly ElementalResistance Resistance;
 
-        private readonly ElementalAttribute _activeStatus;
-        private readonly int _statusOverloadLimit = 10;
+        private readonly ElementalAttribute _status;
+        private readonly int _statusOverloadValue = 10;
 
         private readonly float _weakenStatusTime = 3f;
         private float _weakenStatusTimer = 0f;
@@ -20,30 +20,30 @@ namespace Code.Gameplay.Systems.Battle
         public event Action<ElementalAttributeType> StatusOverloaded;
         public event Action<int> Dead;
 
-        public Resilience(int health, ElementalAttribute activeStatus = null, int statusOverloadLimit = 10)
+        public Resilience(int health, ElementalAttribute status = null, int statusOverloadValue = 10)
         {
             Resistance = new ElementalResistance();
             Health = health;
 
-            _activeStatus = activeStatus;
-            _statusOverloadLimit = statusOverloadLimit;
+            _status = status;
+            _statusOverloadValue = statusOverloadValue;
         }
         
         public CausedDamage ApplyDamage(CausedDamage damage)
         {
-            var lastaActiveStatus = _activeStatus?.Clone() as ElementalAttribute;
+            var lastStatus = _status?.Clone() as ElementalAttribute;
             var causedDamageValue = Health;
 
             var resistedAttribute = Resistance.Resist(damage.Attribute);            
 
-            if (_activeStatus != null)
+            if (_status != null)
             {
-                _activeStatus.Apply(resistedAttribute);
+                _status.Apply(resistedAttribute);
 
-                if (_activeStatus.Strength >= _statusOverloadLimit)
+                if (_status.Strength >= _statusOverloadValue)
                 {
-                    StatusOverloaded?.Invoke(_activeStatus.Type);
-                    _activeStatus.Weaken(1000);
+                    StatusOverloaded?.Invoke(_status.Type);
+                    _status.Weaken(1000);
                 }
             }
 
@@ -62,21 +62,21 @@ namespace Code.Gameplay.Systems.Battle
             return new CausedDamage
             {
                 Value = causedDamageValue,
-                Attribute = lastaActiveStatus,
+                Attribute = lastStatus,
                 Point = damage.Point,
             };
         }
 
         public void Update()
         {
-            if (_activeStatus == null)
+            if (_status == null)
                 return;
 
             _weakenStatusTimer += Time.deltaTime;
             if(_weakenStatusTimer > _weakenStatusTime)
             {
                 _weakenStatusTimer = 0f;
-                _activeStatus.Weaken(1);
+                _status.Weaken(1);
             }
         }
     }

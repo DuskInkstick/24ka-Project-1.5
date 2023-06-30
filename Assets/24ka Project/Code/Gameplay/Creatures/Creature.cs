@@ -46,7 +46,7 @@ namespace Code.Gameplay.Creatures
 
         public CausedDamage ApplyDamage(CausedDamage damage)
         {
-            return _currentState.ApplyDamage(damage);
+            return _currentState.ApplyDamage(damage, _resilience);
         }
 
         private void Awake()
@@ -67,7 +67,7 @@ namespace Code.Gameplay.Creatures
 
             _states = new List<CreatureStateBase>()
             {
-                new CreatureMoveState(this, anim, _resilience, movement, attack)
+                new CreatureMoveState(this, anim, movement, attack)
             };
             _currentState = _states[0];
         }

@@ -9,7 +9,7 @@ public class CharacterInput : MonoBehaviour
     private bool _isLongBlockPerfomed = false;
 
     public event Action<Vector2> MovementVectorChanged;
-    public event Action<Vector2> ViewVectorChanged;
+    public event Action<Vector2> LookVectorChanged;
     public event Action<bool> FocusChanged;
     public event Action DashOrBlock;
     public event Action<bool> LongBlock;
@@ -25,8 +25,8 @@ public class CharacterInput : MonoBehaviour
         _inputControl.Character.Movement.performed += ChangeMovementVector;
         _inputControl.Character.Movement.canceled += ChangeMovementVector;
 
-        _inputControl.Character.View.performed += ChangeViewVector;
-        _inputControl.Character.View.canceled += ChangeViewVector;
+        _inputControl.Character.View.performed += ChangeLookVector;
+        _inputControl.Character.View.canceled += ChangeLookVector;
 
         _inputControl.Character.Focus.started += ChangeFocus;
         _inputControl.Character.Focus.canceled += ChangeFocus;
@@ -43,8 +43,8 @@ public class CharacterInput : MonoBehaviour
         _inputControl.Character.Movement.performed -= ChangeMovementVector;
         _inputControl.Character.Movement.canceled -= ChangeMovementVector;
 
-        _inputControl.Character.View.performed -= ChangeViewVector;
-        _inputControl.Character.View.canceled -= ChangeViewVector;
+        _inputControl.Character.View.performed -= ChangeLookVector;
+        _inputControl.Character.View.canceled -= ChangeLookVector;
 
         _inputControl.Character.Focus.started -= ChangeFocus;
         _inputControl.Character.Focus.canceled -= ChangeFocus;
@@ -60,10 +60,10 @@ public class CharacterInput : MonoBehaviour
         MovementVectorChanged(value);
     }
 
-    private void ChangeViewVector(InputAction.CallbackContext context)
+    private void ChangeLookVector(InputAction.CallbackContext context)
     {
         var value = context.ReadValue<Vector2>();
-        ViewVectorChanged(value);
+        LookVectorChanged(value);
     }
 
     private void ChangeFocus(InputAction.CallbackContext context)
