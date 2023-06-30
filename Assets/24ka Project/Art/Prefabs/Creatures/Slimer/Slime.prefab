@@ -140,6 +140,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _allyGroup: 1
   _attackConfig: {fileID: 11400000, guid: 69fab23b222e3434ea367c5f861674c6, type: 2}
+  _animationConfig: {fileID: 11400000, guid: 8b327283e391f0148979d9c8993e7f0f, type: 2}
 --- !u!95 &5658425682558155008
 Animator:
   serializedVersion: 5
@@ -175,3 +176,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _offset: 0
   _isStatic: 0
+  _max: 0

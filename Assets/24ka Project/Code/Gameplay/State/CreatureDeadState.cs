@@ -1,4 +1,4 @@
-﻿using Code.Gameplay.Systems;
+﻿using Code.Gameplay.Systems.Animation;
 using Code.Interfaces.Architecture;
 using UnityEngine;
 
@@ -7,7 +7,7 @@ namespace Code.Gameplay.State
     internal class CreatureDeadState : CreatureStateBase
     {
         protected CreatureDeadState(IStateSwitcher stateSwitcher,
-                                 FourSideAnimation animation)
+                                 DirectionAnimation animation)
             : base(stateSwitcher, animation) { }
 
 

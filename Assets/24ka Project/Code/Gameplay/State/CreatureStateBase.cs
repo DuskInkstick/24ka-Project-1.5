@@ -1,4 +1,4 @@
-﻿using Code.Gameplay.Systems;
+﻿using Code.Gameplay.Systems.Animation;
 using Code.Gameplay.Systems.Battle;
 using Code.Gameplay.Systems.Battle.AttackPerfomance;
 using Code.Gameplay.Systems.Battle.Enums;
@@ -14,7 +14,7 @@ namespace Code.Gameplay.State
     {
         protected readonly IStateSwitcher StateSwitcher;
 
-        private readonly FourSideAnimation _animation;
+        private readonly DirectionAnimation _animation;
         private readonly Movement _movement;
         private readonly AttackBehavior _attackBehavior;
 
@@ -26,7 +26,7 @@ namespace Code.Gameplay.State
         protected Vector2 MoveVector { get; set; } = Vector2.zero;
 
         protected CreatureStateBase(IStateSwitcher stateSwitcher,
-                                    FourSideAnimation animation,
+                                    DirectionAnimation animation,
                                     Movement movement = null,
                                     AttackBehavior attackBehavior = null)
         {
@@ -42,7 +42,7 @@ namespace Code.Gameplay.State
 
         public virtual void Start() 
         {
-            CleanAnimateState();
+            CleanAnimateDirection();
             LookVector = Vector2.zero;
             MoveVector = Vector2.zero;
         }
@@ -117,9 +117,9 @@ namespace Code.Gameplay.State
             _animation.Animate(ViewVector.ToMoveDirection());
         }
 
-        protected void CleanAnimateState()
+        protected void CleanAnimateDirection()
         {
-            _animation.CleanState();
+            _animation.CleanCurrentDirection();
         }
     }
 }

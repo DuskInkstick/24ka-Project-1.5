@@ -1,4 +1,4 @@
-﻿using Code.Gameplay.Systems;
+﻿using Code.Gameplay.Systems.Animation;
 using Code.Gameplay.Systems.Movements;
 using Code.Interfaces.Architecture;
 using Code.Utils;

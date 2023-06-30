@@ -1,7 +1,6 @@
 ﻿using Code.Gameplay.Creatures.AI;
 using Code.Gameplay.Configuration.Battle.AttackPerfomance;
 using Code.Gameplay.State;
-using Code.Gameplay.Systems;
 using Code.Gameplay.Systems.Battle;
 using Code.Gameplay.Systems.Movements;
 using Code.Interfaces.Architecture;
@@ -9,6 +8,8 @@ using Code.Interfaces.Gameplay;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Code.Gameplay.Systems.Animation;
+using Code.Gameplay.Configuration.Animation;
 
 namespace Code.Gameplay.Creatures
 {
@@ -16,6 +17,7 @@ namespace Code.Gameplay.Creatures
     {
         [SerializeField] private int _allyGroup;
         [SerializeField] private AttackBehaviorConfig _attackConfig;
+        [SerializeField] private DirectionAnimationConfig _animationConfig;
         private Animator _animator;
 
         private CreatureAI _ai;
@@ -61,7 +63,7 @@ namespace Code.Gameplay.Creatures
             _ai = new AngryAI(GetComponent<Collider2D>(), new[] { player }, new DiscreteDirections(6));
             _resilience = new Resilience(10);
 
-            var anim = new FourSideAnimation(_animator, "move", "move", "move", "move");
+            var anim = _animationConfig.Get(_animator);
             var movement = new Movement(transform, 1f);
             var attack = _attackConfig.Get(transform, AllyGroup);
 
