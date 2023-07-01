@@ -1,7 +1,6 @@
 ﻿using Code.Gameplay.Systems.Animation;
 using Code.Gameplay.Systems.Battle;
 using Code.Gameplay.Systems.Battle.AttackPerfomance;
-using Code.Gameplay.Systems.Battle.Enums;
 using Code.Gameplay.Systems.Movements;
 using Code.Interfaces.Architecture;
 using Code.Utils;
@@ -21,6 +20,7 @@ namespace Code.Gameplay.State
         private readonly bool _canMove;
         private readonly bool _canAttack;
 
+        public int Tag { get; set; } = 0;
         public Vector2 ViewVector { get; private set; } = Vector2.down;
         protected Vector2 LookVector { get; set; } = Vector2.zero;
         protected Vector2 MoveVector { get; set; } = Vector2.zero;
@@ -56,9 +56,9 @@ namespace Code.Gameplay.State
                 _attackBehavior.Update();
         }
 
-        public virtual void Attack()
+        public virtual void Attack(bool isPerformed, int stateTag = 0)
         {
-            if (_canAttack)
+            if (_canAttack && isPerformed)
                 _attackBehavior.Attack(ViewVector);
         }
 
@@ -92,10 +92,6 @@ namespace Code.Gameplay.State
             ViewVector = CalcViewVector();
             Animate();
         }
-
-        public virtual void OnStatusOverloaded(ElementalAttributeType status) { }
-
-        public virtual void OnDead(int deadDamage) { }
 
         public virtual void Stop() { }
 

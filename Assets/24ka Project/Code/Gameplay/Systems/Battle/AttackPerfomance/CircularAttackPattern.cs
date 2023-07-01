@@ -39,7 +39,7 @@ namespace Code.Gameplay.Systems.Battle.AttackPerfomance
             var step = AttackAngel / Count;
             var maxAngel = rotationAngel + AttackAngel;
 
-            for (; rotationAngel < maxAngel; rotationAngel += step)
+            for (; rotationAngel < maxAngel - 1; rotationAngel += step)
             {
                 var radians = Mathf.Deg2Rad * rotationAngel;
                 var attackDirection = new Vector2(Mathf.Cos(radians), Mathf.Sin(radians));

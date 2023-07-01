@@ -9,11 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 98b83b0ffa203ce4689f4946e353791d, type: 3}
-  m_Name: direction_animation
+  m_Script: {fileID: 11500000, guid: a62c08170398dda4fa659f14128a5097, type: 3}
+  m_Name: attack_behavior_2
   m_EditorClassIdentifier: 
-  Type: 0
-  Anim1: 
-  Anim2: 
-  Anim3: 
-  Anim4: 
+  AttackPatterns: []
+  _attackInterval: 1
+  _attacksPerSet: 1
+  _addIntervalBetweenSets: 0
+  _loopMode: 0

@@ -1,22 +1,28 @@
 ﻿using Code.Gameplay.Systems.Animation;
 using Code.Interfaces.Architecture;
+using Code.Utils;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace Code.Gameplay.State
 {
-    internal class CreatureDeadState : CreatureStateBase
+    public class CreatureDeadState : CreatureStateBase
     {
-        protected CreatureDeadState(IStateSwitcher stateSwitcher,
-                                 DirectionAnimation animation)
+        public CreatureDeadState(IStateSwitcher stateSwitcher,
+                                    DirectionAnimation animation)
             : base(stateSwitcher, animation) { }
 
 
         public override void Update() { }
 
-        public override void Attack() { }
+        public override void Attack(bool isPerformed, int stateTag = 0) { }
 
         public override void MoveIn(Vector2 direction) { }
 
-        protected override Vector2 CalcViewVector() => ViewVector;
+        public override void LookIn(Vector2 direction)
+        {
+            if(LookVector.ToMoveDirection() == MoveDirection.None)
+                base.LookIn(direction);
+        }
     }
 }

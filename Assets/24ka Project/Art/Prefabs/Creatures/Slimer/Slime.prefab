@@ -12,9 +12,9 @@ GameObject:
   - component: {fileID: 5658425682558155014}
   - component: {fileID: 5658425682558155013}
   - component: {fileID: 5658425682558155012}
-  - component: {fileID: 5658425682558155019}
   - component: {fileID: 5658425682558155008}
   - component: {fileID: 6831260145349972348}
+  - component: {fileID: 8088775506437898444}
   m_Layer: 0
   m_Name: Slime
   m_TagString: Untagged
@@ -126,21 +126,6 @@ CapsuleCollider2D:
   m_Offset: {x: 0.8, y: 0.41}
   m_Size: {x: 1.24, y: 0.77}
   m_Direction: 1
---- !u!114 &5658425682558155019
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5658425682558155018}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7eb5a452f406dc144a80151d17ade17a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _allyGroup: 1
-  _attackConfig: {fileID: 11400000, guid: 69fab23b222e3434ea367c5f861674c6, type: 2}
-  _animationConfig: {fileID: 11400000, guid: 8b327283e391f0148979d9c8993e7f0f, type: 2}
 --- !u!95 &5658425682558155008
 Animator:
   serializedVersion: 5
@@ -177,3 +162,23 @@ MonoBehaviour:
   _offset: 0
   _isStatic: 0
   _max: 0
+--- !u!114 &8088775506437898444
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5658425682558155018}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e7e47a8a8f7daf45bb0d9a57fbde075, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _idleAnimation: {fileID: 11400000, guid: 7b11b1714179c2c4089381fae2fa0c44, type: 2}
+  _deadAnimation: {fileID: 11400000, guid: 7b11b1714179c2c4089381fae2fa0c44, type: 2}
+  _allyGroup: 1
+  _health: 10
+  _moveAttackConfig: {fileID: 11400000, guid: 5d9ca6597691ca64f84ce868d1fd1375, type: 2}
+  _moveAnimation: {fileID: 11400000, guid: 7b11b1714179c2c4089381fae2fa0c44, type: 2}
+  _attackConfig: {fileID: 11400000, guid: 69fab23b222e3434ea367c5f861674c6, type: 2}
+  _attackAnimation: {fileID: 11400000, guid: 7b11b1714179c2c4089381fae2fa0c44, type: 2}

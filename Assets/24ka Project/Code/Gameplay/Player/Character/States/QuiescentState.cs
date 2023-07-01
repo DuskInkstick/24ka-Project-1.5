@@ -16,12 +16,12 @@ namespace Code.Gameplay.Player.Character.States
         private readonly IcePlacer _icePlacer;
         public QuiescentState(IStateSwitcher switcher,
                            Animator animator,
-                           AttackBehavior attackBehavior,
+                           AttackBehavior attack,
                            IcePlacer icePlacer)
              : base(switcher,
                     new FourSideAnimation(animator, "idle_up", "idle_down", "idle_left", "idle_right"),
                     null,
-                    attackBehavior)
+                    attack)
         {
             _icePlacer = icePlacer;
         }

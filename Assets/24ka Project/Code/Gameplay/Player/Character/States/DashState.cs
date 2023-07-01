@@ -49,6 +49,6 @@ namespace Code.Gameplay.Player.Character.States
                 base.LookIn(direction);
         }
 
-        public override void Attack() { }
+        public override void Attack(bool isPerformed, int tag = 0) { }
     }
 }

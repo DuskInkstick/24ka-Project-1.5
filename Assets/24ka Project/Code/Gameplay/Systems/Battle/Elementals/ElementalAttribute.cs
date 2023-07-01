@@ -8,7 +8,9 @@ namespace Code.Gameplay.Systems.Battle.Elementals
         public ElementalAttributeType Type { get; private set; }
         public int Strength { get; private set; }
 
-        public ElementalAttribute(ElementalAttributeType type, int strength)
+        public ElementalAttribute(
+            ElementalAttributeType type = ElementalAttributeType.None,
+            int strength = 0)
         {
             Type = type;
             Strength = strength;

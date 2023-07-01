@@ -9,6 +9,7 @@ public class DirectionAnimationConfigEditor : Editor
     private void OnEnable()
     {
         _config = (DirectionAnimationConfig)target;
+        EditorUtility.SetDirty(target);
     }
 
     public override void OnInspectorGUI()
@@ -33,6 +34,7 @@ public class DirectionAnimationConfigEditor : Editor
                 _config.Anim4 = EditorGUILayout.TextField("Right Anim", _config.Anim4);
                 break;
         }
+        
     }
 }
 
