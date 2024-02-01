@@ -6,13 +6,12 @@ public class CharacterInput : MonoBehaviour
 {
     private InputControl _inputControl;
     private bool _isFocused = false;
-    private bool _isLongBlockPerfomed = false;
 
     public event Action<Vector2> MovementVectorChanged;
     public event Action<Vector2> LookVectorChanged;
     public event Action<bool> FocusChanged;
-    public event Action DashOrBlock;
-    public event Action<bool> LongBlock;
+    public event Action Jumped;
+    public event Action ActivatedDefence;
 
     private void Awake()
     {
@@ -25,16 +24,14 @@ public class CharacterInput : MonoBehaviour
         _inputControl.Character.Movement.performed += ChangeMovementVector;
         _inputControl.Character.Movement.canceled += ChangeMovementVector;
 
-        _inputControl.Character.View.performed += ChangeLookVector;
-        _inputControl.Character.View.canceled += ChangeLookVector;
+        _inputControl.Character.Look.performed += ChangeLookVector;
+        _inputControl.Character.Look.canceled += ChangeLookVector;
 
         _inputControl.Character.Focus.started += ChangeFocus;
         _inputControl.Character.Focus.canceled += ChangeFocus;
 
-        _inputControl.Character.DashAndBlock.started += StartStopDashOrBlock;
-        _inputControl.Character.DashAndBlock.performed += PerformDashOrBlock;
-        _inputControl.Character.DashAndBlock.canceled += CancelDashOrBlock;
-
+        _inputControl.Character.Jump.started += Jump;
+        _inputControl.Character.Defense.started += ActivateDefense;
     }
 
     private void OnDisable()
@@ -43,15 +40,14 @@ public class CharacterInput : MonoBehaviour
         _inputControl.Character.Movement.performed -= ChangeMovementVector;
         _inputControl.Character.Movement.canceled -= ChangeMovementVector;
 
-        _inputControl.Character.View.performed -= ChangeLookVector;
-        _inputControl.Character.View.canceled -= ChangeLookVector;
+        _inputControl.Character.Look.performed -= ChangeLookVector;
+        _inputControl.Character.Look.canceled -= ChangeLookVector;
 
         _inputControl.Character.Focus.started -= ChangeFocus;
         _inputControl.Character.Focus.canceled -= ChangeFocus;
 
-        _inputControl.Character.DashAndBlock.started -= StartStopDashOrBlock;
-        _inputControl.Character.DashAndBlock.performed -= PerformDashOrBlock;
-        _inputControl.Character.DashAndBlock.canceled -= CancelDashOrBlock;
+        _inputControl.Character.Jump.started -= Jump;
+        _inputControl.Character.Defense.started -= ActivateDefense;
     }
 
     private void ChangeMovementVector(InputAction.CallbackContext context)
@@ -72,7 +68,17 @@ public class CharacterInput : MonoBehaviour
         FocusChanged(_isFocused);
     }
 
-    private void StartStopDashOrBlock(InputAction.CallbackContext context)
+    private void Jump(InputAction.CallbackContext context)
+    {
+        Jumped.Invoke();
+    }
+
+    private void ActivateDefense(InputAction.CallbackContext context)
+    {
+        ActivatedDefence.Invoke();
+    }
+
+   /* private void StartStopDashOrBlock(InputAction.CallbackContext context)
     {
         if(_isFocused == false)
             DashOrBlock.Invoke();
@@ -97,5 +103,5 @@ public class CharacterInput : MonoBehaviour
 
         if(_isFocused)
             LongBlock.Invoke(true);
-    }
+    }*/
 }

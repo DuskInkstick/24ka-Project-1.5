@@ -46,7 +46,7 @@ public partial class @InputControl: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": true
                 },
                 {
-                    ""name"": ""View"",
+                    ""name"": ""Look"",
                     ""type"": ""Value"",
                     ""id"": ""c5d012d5-21c4-4986-aead-f97e7f8d8de8"",
                     ""expectedControlType"": ""Vector2"",
@@ -55,12 +55,21 @@ public partial class @InputControl: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": true
                 },
                 {
-                    ""name"": ""DashAndBlock"",
+                    ""name"": ""Jump"",
                     ""type"": ""Button"",
                     ""id"": ""dd8d24a8-e376-471a-b212-aba5010bd266"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
-                    ""interactions"": ""Hold"",
+                    ""interactions"": ""Press"",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Defense"",
+                    ""type"": ""Button"",
+                    ""id"": ""dba96793-921d-4e35-8b56-1336654d885b"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
                     ""initialStateCheck"": false
                 }
             ],
@@ -138,7 +147,7 @@ public partial class @InputControl: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""View"",
+                    ""action"": ""Look"",
                     ""isComposite"": true,
                     ""isPartOfComposite"": false
                 },
@@ -149,7 +158,7 @@ public partial class @InputControl: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard"",
-                    ""action"": ""View"",
+                    ""action"": ""Look"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -160,7 +169,7 @@ public partial class @InputControl: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard"",
-                    ""action"": ""View"",
+                    ""action"": ""Look"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -171,7 +180,7 @@ public partial class @InputControl: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard"",
-                    ""action"": ""View"",
+                    ""action"": ""Look"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -182,7 +191,7 @@ public partial class @InputControl: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard"",
-                    ""action"": ""View"",
+                    ""action"": ""Look"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -193,7 +202,18 @@ public partial class @InputControl: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard"",
-                    ""action"": ""DashAndBlock"",
+                    ""action"": ""Jump"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""2c6b1582-94e6-4738-a6b1-3b084f9ed446"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": ""Press"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Defense"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -234,8 +254,9 @@ public partial class @InputControl: IInputActionCollection2, IDisposable
         m_Character = asset.FindActionMap("Character", throwIfNotFound: true);
         m_Character_Movement = m_Character.FindAction("Movement", throwIfNotFound: true);
         m_Character_Focus = m_Character.FindAction("Focus", throwIfNotFound: true);
-        m_Character_View = m_Character.FindAction("View", throwIfNotFound: true);
-        m_Character_DashAndBlock = m_Character.FindAction("DashAndBlock", throwIfNotFound: true);
+        m_Character_Look = m_Character.FindAction("Look", throwIfNotFound: true);
+        m_Character_Jump = m_Character.FindAction("Jump", throwIfNotFound: true);
+        m_Character_Defense = m_Character.FindAction("Defense", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -299,16 +320,18 @@ public partial class @InputControl: IInputActionCollection2, IDisposable
     private List<ICharacterActions> m_CharacterActionsCallbackInterfaces = new List<ICharacterActions>();
     private readonly InputAction m_Character_Movement;
     private readonly InputAction m_Character_Focus;
-    private readonly InputAction m_Character_View;
-    private readonly InputAction m_Character_DashAndBlock;
+    private readonly InputAction m_Character_Look;
+    private readonly InputAction m_Character_Jump;
+    private readonly InputAction m_Character_Defense;
     public struct CharacterActions
     {
         private @InputControl m_Wrapper;
         public CharacterActions(@InputControl wrapper) { m_Wrapper = wrapper; }
         public InputAction @Movement => m_Wrapper.m_Character_Movement;
         public InputAction @Focus => m_Wrapper.m_Character_Focus;
-        public InputAction @View => m_Wrapper.m_Character_View;
-        public InputAction @DashAndBlock => m_Wrapper.m_Character_DashAndBlock;
+        public InputAction @Look => m_Wrapper.m_Character_Look;
+        public InputAction @Jump => m_Wrapper.m_Character_Jump;
+        public InputAction @Defense => m_Wrapper.m_Character_Defense;
         public InputActionMap Get() { return m_Wrapper.m_Character; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -324,12 +347,15 @@ public partial class @InputControl: IInputActionCollection2, IDisposable
             @Focus.started += instance.OnFocus;
             @Focus.performed += instance.OnFocus;
             @Focus.canceled += instance.OnFocus;
-            @View.started += instance.OnView;
-            @View.performed += instance.OnView;
-            @View.canceled += instance.OnView;
-            @DashAndBlock.started += instance.OnDashAndBlock;
-            @DashAndBlock.performed += instance.OnDashAndBlock;
-            @DashAndBlock.canceled += instance.OnDashAndBlock;
+            @Look.started += instance.OnLook;
+            @Look.performed += instance.OnLook;
+            @Look.canceled += instance.OnLook;
+            @Jump.started += instance.OnJump;
+            @Jump.performed += instance.OnJump;
+            @Jump.canceled += instance.OnJump;
+            @Defense.started += instance.OnDefense;
+            @Defense.performed += instance.OnDefense;
+            @Defense.canceled += instance.OnDefense;
         }
 
         private void UnregisterCallbacks(ICharacterActions instance)
@@ -340,12 +366,15 @@ public partial class @InputControl: IInputActionCollection2, IDisposable
             @Focus.started -= instance.OnFocus;
             @Focus.performed -= instance.OnFocus;
             @Focus.canceled -= instance.OnFocus;
-            @View.started -= instance.OnView;
-            @View.performed -= instance.OnView;
-            @View.canceled -= instance.OnView;
-            @DashAndBlock.started -= instance.OnDashAndBlock;
-            @DashAndBlock.performed -= instance.OnDashAndBlock;
-            @DashAndBlock.canceled -= instance.OnDashAndBlock;
+            @Look.started -= instance.OnLook;
+            @Look.performed -= instance.OnLook;
+            @Look.canceled -= instance.OnLook;
+            @Jump.started -= instance.OnJump;
+            @Jump.performed -= instance.OnJump;
+            @Jump.canceled -= instance.OnJump;
+            @Defense.started -= instance.OnDefense;
+            @Defense.performed -= instance.OnDefense;
+            @Defense.canceled -= instance.OnDefense;
         }
 
         public void RemoveCallbacks(ICharacterActions instance)
@@ -385,7 +414,8 @@ public partial class @InputControl: IInputActionCollection2, IDisposable
     {
         void OnMovement(InputAction.CallbackContext context);
         void OnFocus(InputAction.CallbackContext context);
-        void OnView(InputAction.CallbackContext context);
-        void OnDashAndBlock(InputAction.CallbackContext context);
+        void OnLook(InputAction.CallbackContext context);
+        void OnJump(InputAction.CallbackContext context);
+        void OnDefense(InputAction.CallbackContext context);
     }
 }

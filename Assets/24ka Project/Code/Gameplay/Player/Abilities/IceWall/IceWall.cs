@@ -21,9 +21,9 @@ namespace Code.Gameplay.Player.Abilities.IceWall
 
         public int AllyGroup => _allyGroup;
 
-        public CausedDamage ApplyDamage(CausedDamage damage)
+        public int ApplyDamage(Damage damage)
         {
-            Instantiate(_hitEffect, damage.Point, Quaternion.identity);
+            Instantiate(_hitEffect, damage.Place, Quaternion.identity);
 
             BreakIce(damage.Value);
 

@@ -5,8 +5,19 @@ namespace Code.Gameplay.Systems.Battle.Elementals
 {
     public class ElementalAttribute : ICloneable
     {
-        public ElementalAttributeType Type { get; private set; }
-        public int Strength { get; private set; }
+        public ElementalAttributeType Type { get; set; }
+        private int _strenght = 0;
+        public int Strength
+        {
+            get => _strenght;
+            set
+            {
+                if(value >= 0)
+                    _strenght = value;
+                else
+                    _strenght = 0;
+            }
+        }
 
         public ElementalAttribute(
             ElementalAttributeType type = ElementalAttributeType.None,
@@ -50,28 +61,13 @@ namespace Code.Gameplay.Systems.Battle.Elementals
             }
         }
 
-        public void Weaken(int value)
-        {
-            if (Strength == 0)
-                return;
-
-            if(value > 0)
-            {
-                Strength -= value;
-
-                if(Strength < 0)
-                    Strength = 0;
-            }
-        }
-
         private void ApplyIce(ElementalAttribute ice)
         {
             switch (Type)
             {
                 case ElementalAttributeType.Water:
                     Type = ElementalAttributeType.Ice;
-                    Strength += ice.Strength;
-                    Strength *= 2;
+                    Strength += ice.Strength * 2;
                     break;
             }
         }
@@ -81,7 +77,7 @@ namespace Code.Gameplay.Systems.Battle.Elementals
             switch (Type)
             {
                 case ElementalAttributeType.Ice:
-                    Strength += water.Strength;
+                    Strength += water.Strength * 2;
                     break;
             }
         }

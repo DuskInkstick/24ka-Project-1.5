@@ -14,7 +14,7 @@ namespace Code.Gameplay.Systems.Animation
 
         public abstract void Animate(MoveDirection direction);
 
-        public abstract void CleanCurrentDirection();
+        public abstract void Start();
 
         public void SetBool(string paramName, bool value)
         {

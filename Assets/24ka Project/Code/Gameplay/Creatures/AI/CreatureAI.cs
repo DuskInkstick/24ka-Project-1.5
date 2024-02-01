@@ -23,6 +23,7 @@ namespace Code.Gameplay.Creatures.AI
 
         public Vector2 MoveVector { get; private set; }
         public Vector2 LookVector { get; private set; } = Vector2.down;
+        public Vector2 ActionPoint { get; private set; } = Vector2.zero;
         public bool IsAttacking { get; private set; }
 
         protected Vector2 Position => _self.bounds.center;
@@ -48,18 +49,22 @@ namespace Code.Gameplay.Creatures.AI
 
             CheckOthersInSight();
 
-            LookVector = CalculateLook();
+            LookVector = SetLookVector();
 
-            MoveVector = CalculateMovement();
+            MoveVector = SetMoveVector();
 
-            IsAttacking = CalculateAttack();
+            ActionPoint = SetActionPoint();
+
+            IsAttacking = SetIsAttacking();
         }
 
-        protected abstract Vector2 CalculateMovement();
+        protected abstract Vector2 SetMoveVector();
 
-        protected abstract Vector2 CalculateLook();
+        protected abstract Vector2 SetLookVector();
 
-        protected abstract bool CalculateAttack();
+        protected abstract Vector2 SetActionPoint();
+
+        protected abstract bool SetIsAttacking();
 
         protected abstract void ProcessOthersInSight(IList<(float, Collider2D)> others);
 

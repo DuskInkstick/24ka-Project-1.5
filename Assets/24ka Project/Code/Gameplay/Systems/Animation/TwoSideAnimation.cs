@@ -17,6 +17,12 @@ namespace Code.Gameplay.Systems.Animation
             _negativeAnim = negativeAnim;
         }
 
+        public override void Start()
+        {
+            _currentDirX = MoveDirection.None;
+            _currentDirY = MoveDirection.None;
+        }
+
         public override void Animate(MoveDirection direction)
         {
             if (_currentDirY == direction || _currentDirX == direction)
@@ -34,12 +40,6 @@ namespace Code.Gameplay.Systems.Animation
                 _currentDirX = MoveDirection.Left;
                 _currentDirY = MoveDirection.Down;
             }
-        }
-
-        public override void CleanCurrentDirection()
-        {
-            _currentDirX = MoveDirection.None;
-            _currentDirY = MoveDirection.None;
         }
     }
 }

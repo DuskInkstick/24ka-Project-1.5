@@ -1,13 +1,16 @@
-using Code.Gameplay.Player.Buttle;
-using Code.Gameplay.Systems.Battle.AttackingObjects;
+using Assets._24ka_Project.Code.Gameplay.Systems.Battle.Patterns;
+using Code.Gameplay.Systems.Battle.Objects;
+using Code.Gameplay.Systems.Battle.Patterns;
+using Code.Gameplay.Systems.Battle.Series;
 using Code.Gameplay.Systems.Movements;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Code.Gameplay.Player.Weapons
 {
     public class Staff : MonoBehaviour
     {
-        [SerializeField] private Bullet _tearTemplate;
+        [SerializeField] private Projectile _tearTemplate;
         [SerializeField] private ParticleSystem _onAttackingEffect;
 
         private StaffAnimationController _animation;
@@ -15,39 +18,41 @@ namespace Code.Gameplay.Player.Weapons
 
         public Transform Owner { get; set; }
         public int AllyGroup { get; set; }
-        public CharacterAttackBehavior AttackBehavior { get; private set; }
+        public RepeatAttackSeries AttackSeries { get; private set; }
+
+        public void PlayAttack()
+        {
+            _onAttackingEffect.Play();
+            _animation.PlayAttack();
+        }
 
         private void Awake()
         {
-            AttackBehavior = new CharacterAttackBehavior(transform, new Vector2(0f, 1.3f), _tearTemplate);
+            AttackSeries = new RepeatAttackSeries(
+                new List<AttackPattern>
+                {
+                    new OneAttackPattern(transform, _tearTemplate)
+                    {
+                        AttackObjInitSpeed = 12f,
+                        AllyGroup = AllyGroup,
+                        AttackObjLifeTime = 5f,
+                    }
+                })
+            {
+                AllyGroup = AllyGroup,
+                TimeBetweenPatterns = 0.05f,
+            };
         }
 
         private void Start()
         {
             _animation = GetComponentInChildren<StaffAnimationController>();
             _movement = new FollowingMovement(transform, Owner);
-            AttackBehavior.AllyGroup = AllyGroup;
-        }
-
-        private void OnEnable()
-        {
-            AttackBehavior.Attacking += OnAttacking;
         }
 
         private void Update()
         {
             _movement.Move(Time.deltaTime);
-        }
-
-        private void OnDisable()
-        {
-            AttackBehavior.Attacking -= OnAttacking;
-        }
-
-        private void OnAttacking(int attackNote)
-        {
-            _onAttackingEffect.Play();
-            _animation.PlayAttack();
-        }
+        }    
     }
 }

@@ -21,6 +21,11 @@ namespace Code.Gameplay.Systems.Animation
             _rightAnim = rightAnim;
         }
 
+        public override void Start()
+        {
+            _currenetDirection = MoveDirection.None;
+        }
+
         public override void Animate(MoveDirection moveDirection)
         {
             if (_currenetDirection == moveDirection)
@@ -43,11 +48,6 @@ namespace Code.Gameplay.Systems.Animation
                     Animator.Play(_rightAnim);
                     break;
             }
-        }
-
-        public override void CleanCurrentDirection()
-        {
-            _currenetDirection = MoveDirection.None;
         }
     }
 }

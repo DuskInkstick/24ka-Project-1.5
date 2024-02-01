@@ -11,7 +11,7 @@ namespace Code.Gameplay.Creatures.AI
         private const float _changeMoveTime = 1.5f;
         private float _changeMoveTimer = Random.Range(0f, _changeMoveTime);
 
-        private Vector2 VectorToTarget => (Vector2)_target.transform.position - Position;
+        private Vector2 VectorToTarget => (Vector2)_target.bounds.center  - Position;
 
         public AngryAI(Collider2D self,
                        IEnumerable<Collider2D> observableCreatures,
@@ -20,7 +20,7 @@ namespace Code.Gameplay.Creatures.AI
         {
         }
 
-        protected override Vector2 CalculateLook()
+        protected override Vector2 SetLookVector()
         {
             if (_target != null)
                 return VectorToTarget;
@@ -28,7 +28,7 @@ namespace Code.Gameplay.Creatures.AI
             return MoveVector == Vector2.zero ? LookVector : MoveVector;
         }
 
-        protected override Vector2 CalculateMovement()
+        protected override Vector2 SetMoveVector()
         {
             if(_changeMoveTimer < _changeMoveTime)
             {
@@ -43,7 +43,12 @@ namespace Code.Gameplay.Creatures.AI
             return GetRandomVector();
         }
 
-        protected override bool CalculateAttack()
+        protected override Vector2 SetActionPoint()
+        {
+            return _target != null ? _target.bounds.center : Vector2.zero;
+        }
+
+        protected override bool SetIsAttacking()
         {
             return _target != null;
         }

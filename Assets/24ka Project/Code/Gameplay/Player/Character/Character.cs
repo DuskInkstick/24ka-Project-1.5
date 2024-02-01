@@ -1,117 +1,317 @@
+﻿using Assets._24ka_Project.Code.Gameplay.State;
 using Code.Gameplay.Creatures;
 using Code.Gameplay.Player.Abilities.IceWall;
-using Code.Gameplay.Player.Character.States;
 using Code.Gameplay.Player.Weapons;
 using Code.Gameplay.State;
+using Code.Gameplay.Systems.Animation;
+using Code.Gameplay.Systems.Movements;
 using Code.Utils;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-[RequireComponent(typeof(CharacterInput))]
-[RequireComponent(typeof(Rigidbody2D))]
-public class Character : CreatureBase
+namespace Assets._24ka_Project.Code.Gameplay.Player.Character
 {
-    [SerializeField] private Staff _staff;
-    [SerializeField] private IceWall _horizontalWall;
-    [SerializeField] private IceWall _verticalWall;
-
-    private CharacterInput _input;
-
-    private Vector2 _moveVector;
-    private Vector2 _lookVector;
-
-    private bool _isFocused = false;
-
-    public override bool SwitchState<T>(int tag = 0)
+    [RequireComponent(typeof(CharacterInput))]
+    [RequireComponent(typeof(Rigidbody2D))]
+    internal class Character : CreatureBase
     {
-        if(base.SwitchState<T>(tag) == false)
-            return false;
+        [SerializeField] private Staff _staff;
+        [SerializeField] private IceWall _horizontalWall;
+        [SerializeField] private IceWall _verticalWall;
 
-        Focus(_isFocused);
-        return true;
-    }
+        private CharacterInput _input;
+        private Animator _animator;
 
-    public override void Initialize()
-    {
-        var icePlacer = new IcePlacer(transform, _horizontalWall, _verticalWall);
+        private Vector2 _moveVector;
+        private Vector2 _lookVector;
 
-        States = new List<CreatureStateBase>()
+        private bool _isFocused;
+
+        private float _pressExtraTime = 0.25f;
+
+        private float _jumpPressExtraTimer = 0;
+        private float _defensePressExtraTimer = 0;
+
+        public void Initialize()
         {
-            new QuiescentState(this, Animator, _staff.AttackBehavior, icePlacer),
-            new WalkState(this, Animator, transform, 7f, _staff.AttackBehavior),
-            new FocusState(this, Animator, transform, 3f, _staff.AttackBehavior, icePlacer),
-            new DashState(this, Animator, transform, 12f)
+            InitializeStates();
+            AddTransitions();
+        }
+
+        protected override void Start()
+        {
+            base.Start();
+            Initialize();
+        }
+
+        protected override void Update()
+        {
+            base.Update();
+
+            CurrentState.Update(
+                _lookVector,
+                _moveVector,
+                (Vector2)transform.position + CurrentState.ViewVector);
+
+            if (_jumpPressExtraTimer > 0f)
+                _jumpPressExtraTimer -= Time.deltaTime;
+
+            if( _defensePressExtraTimer > 0f)
+                _defensePressExtraTimer -= Time.deltaTime;
+
+            if(CurrentState is AttackState)
+                _staff.PlayAttack();
+        }
+
+        private void Awake()
+        {
+            _input = GetComponent<CharacterInput>();
+            _animator = GetComponent<Animator>();
+
+            _staff.Owner = transform;
+            _staff.AllyGroup = AllyGroup;
+        }
+
+        private void OnEnable()
+        {
+            _input.MovementVectorChanged += SetMovemetnVector;
+            _input.LookVectorChanged += SetLookVector;
+            _input.FocusChanged += Focus;
+            _input.Jumped += Jump;
+            _input.ActivatedDefence += Defense;
+        }
+
+        private void OnDisable()
+        {
+            _input.MovementVectorChanged -= SetMovemetnVector;
+            _input.LookVectorChanged -= SetLookVector;
+            _input.FocusChanged -= Focus;
+            _input.Jumped -= Jump;
+            _input.ActivatedDefence -= Defense;
+        }
+
+        private void SetMovemetnVector(Vector2 direction)
+        {
+            _moveVector = direction;
+        }
+
+        private void SetLookVector(Vector2 direction)
+        {
+            _lookVector = direction;
+        }
+
+        private void Focus(bool isFocused)
+        {
+            _isFocused = isFocused;
+        }
+
+        private void Jump()
+        {
+            _jumpPressExtraTimer = _pressExtraTime;
+        }
+
+        private void Defense()
+        {
+            _defensePressExtraTimer = _pressExtraTime;
+        }
+
+        private void InitializeStates()
+        {
+            var movement = new Movement(transform, 8);
+            var focusMovement = new Movement(transform, 4);
+
+            States = new List<CreatureStateBase>()
+        {
+            new IdleState(
+                this,
+                new FourSideAnimation(_animator, "idle_up", "idle_down", "idle_left", "idle_right")),
+            new MoveState(
+                this,
+                new FourSideAnimation(_animator, "walk_up", "walk_down", "walk_left", "walk_right"),
+                movement) { Phase = 0},
+            new MoveState(
+                this,
+                new FourSideAnimation(_animator, "walk_up", "walk_down", "walk_left", "walk_right"),
+                focusMovement) { Phase = 1 },
+            new JumpState(
+                this,
+                new FourSideAnimation(_animator, "dash_up", "dash_down", "dash_left", "dash_right"),
+                new Movement(transform, 12)),
+            new AttackState(
+                this,
+                new FourSideAnimation(_animator, "walk_up", "walk_down", "walk_left", "walk_right"),
+                _staff.AttackSeries,
+                movement) { Phase = 0},
+            new AttackState(
+                this,
+                new FourSideAnimation(_animator, "walk_up", "walk_down", "walk_left", "walk_right"),
+                _staff.AttackSeries,
+                focusMovement) { Phase = 1},
+            new DefenseState(
+                this,
+                new FourSideAnimation(_animator, "dash_up", "dash_down", "dash_left", "dash_right"),
+                new IcePlacer(_horizontalWall, _verticalWall)) { ExecutionTime = 0f },
+            new DeathState(
+                this,
+                new FourSideAnimation(_animator, "idle_up", "idle_down", "idle_left", "idle_right"))
         };
-        CurrentState = States[0];
-    }
+            CurrentState = States[0];
+        }
 
-    protected override void Awake()
-    {
-        base.Awake();
-        _input = GetComponent<CharacterInput>();
+        private void AddTransitions()
+        {
+            foreach (var state in States)
+            {
+                switch (state)
+                {
+                    case IdleState idle:
+                        idle.SetTransition(IdleStateTransitions);
+                        break;
+                    case MoveState move:
+                        move.SetTransition(MoveStateTransitions);
+                        break;
+                    case JumpState jump:
+                        jump.SetTransition(UninterruptedStatesTransitions);
+                        break;
+                    case AttackState attack:
+                        attack.SetTransition(AttackStateTransitions);
+                        break;
+                    case DefenseState defense:
+                        defense.SetTransition(UninterruptedStatesTransitions);
+                        break;
+                }
+            }
+        }
 
-        _staff.Owner = transform;
-        _staff.AllyGroup = AllyGroup;
-    }
+   
+        private void IdleStateTransitions(bool isComplited)
+        {
+            if(TrySwithToJumpState()) return;
 
-    protected override void OnDead(int deadDamage) { }
+            if(TrySwithToDefenseState()) return;
 
-    private void OnEnable()
-    {
-        _input.MovementVectorChanged += SetMovemetnVector;
-        _input.LookVectorChanged += SetLookVector;
-        _input.FocusChanged += Focus;
-        _input.DashOrBlock += Escape;
-        _input.LongBlock += PerformLongBlock;
-    }
+            if(TrySwithToAttackState()) return;
 
-    private void Update()
-    {
-        CurrentState.MoveIn(_moveVector);
-        CurrentState.LookIn(_lookVector);
+            TrySwithToMoveState();
+        }
 
-        if (_lookVector.ToMoveDirection() != MoveDirection.None)
-            CurrentState.Attack(true);
+        private void MoveStateTransitions(bool isComplited)
+        {
+            if(TrySwithToJumpState()) return;
 
-        CurrentState.Update();
-    }
+            if(TrySwithToDefenseState()) return;
 
-    private void OnDisable()
-    {
-        _input.MovementVectorChanged -= SetMovemetnVector;
-        _input.LookVectorChanged -= SetLookVector;
-        _input.FocusChanged -= Focus;
-        _input.DashOrBlock -= Escape;
-        _input.LongBlock -= PerformLongBlock;
-    }
+            if(TrySwithToAttackState()) return;
 
-    private void SetMovemetnVector(Vector2 direction)
-    {
-        _moveVector = direction;
-    }
+            if(_moveVector.ToMoveDirection() == MoveDirection.None)
+            {
+                SwitchState<IdleState>();
+                return;
+            }
 
-    private void SetLookVector(Vector2 direction)
-    {
-        _lookVector = direction;
-    }
+            if(CurrentState.Phase == 0 && _isFocused)
+                SwitchState<MoveState>(1);
 
-    private void Focus(bool isFocused)
-    {
-        _isFocused = isFocused;
+            else if(CurrentState.Phase == 1 && _isFocused == false)
+                SwitchState<MoveState>(0);
+        }
 
-        if (CurrentState is CharacterActionState character)
-            character.Focus(isFocused);
-    }
+        private void AttackStateTransitions(bool isComplited)
+        {
+            if(isComplited == false)
+                return;
 
-    private void Escape()
-    {
-        if (CurrentState is CharacterActionState character)
-            character.UseEscapeSkill();
-    }
+            if (TrySwithToJumpState()) return;
 
-    private void PerformLongBlock(bool performing)
-    {
-        Debug.Log("LongBlock " + performing);
+            if (TrySwithToDefenseState()) return;
+
+            if(_lookVector.ToMoveDirection() == MoveDirection.None)
+            {
+                if (TrySwithToMoveState()) return;
+
+                SwitchState<IdleState>();
+                return;
+            }
+
+            if (CurrentState.Phase == 0 && _isFocused)
+            {
+                SwitchState<AttackState>(1);
+                return;
+            }
+            else if (CurrentState.Phase == 1 && _isFocused == false)
+            {
+                SwitchState<AttackState>(0);
+                return;
+            }           
+        }
+
+        private void UninterruptedStatesTransitions(bool isComplited)
+        {
+            if (isComplited == false)
+                return;
+
+            if (TrySwithToJumpState()) return;
+
+            if (TrySwithToDefenseState()) return;
+
+            if (TrySwithToAttackState()) return;
+
+            if (TrySwithToMoveState()) return;
+
+            SwitchState<IdleState>();
+        }
+
+        private bool TrySwithToMoveState()
+        {
+            if (_moveVector.ToMoveDirection() == MoveDirection.None)
+                return false;
+
+            if (_isFocused)
+            {
+                SwitchState<MoveState>(1);
+                return true;
+            }
+
+            SwitchState<MoveState>(0);
+            return true;
+        }
+
+        private bool TrySwithToJumpState()
+        {
+            if (_jumpPressExtraTimer <= 0f)
+                return false;
+
+            _jumpPressExtraTimer = 0f;
+
+            SwitchState<JumpState>();
+            return true;
+        }
+
+        private bool TrySwithToAttackState()
+        {
+            if (_lookVector.ToMoveDirection() == MoveDirection.None)
+                return false;
+
+            if (_isFocused)
+            {
+                SwitchState<AttackState>(1);
+                return true;
+            }
+
+            SwitchState<AttackState>(0);
+            return true;
+        }
+
+        private bool TrySwithToDefenseState()
+        {
+            if (_defensePressExtraTimer <= 0f)
+                return false;
+
+            _defensePressExtraTimer = 0f;
+
+            SwitchState<DefenseState>();
+            return true;
+        }
     }
 }

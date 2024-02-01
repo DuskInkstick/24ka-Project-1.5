@@ -1,9 +1,7 @@
 ﻿using Code.Gameplay.Systems.Animation;
-using Code.Gameplay.Systems.Battle;
-using Code.Gameplay.Systems.Battle.AttackPerfomance;
-using Code.Gameplay.Systems.Movements;
 using Code.Interfaces.Architecture;
 using Code.Utils;
+using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -12,88 +10,79 @@ namespace Code.Gameplay.State
     public abstract class CreatureStateBase
     {
         protected readonly IStateSwitcher StateSwitcher;
-
         private readonly DirectionAnimation _animation;
-        private readonly Movement _movement;
-        private readonly AttackBehavior _attackBehavior;
+        private float _executionTimer = 0f;
 
-        private readonly bool _canMove;
-        private readonly bool _canAttack;
+        public int Phase { get; set; } = 0;
+        public float ExecutionTime { get; set; } = 0f;
+        public bool IsComplited { get; protected set; } = true;
 
-        public int Tag { get; set; } = 0;
-        public Vector2 ViewVector { get; private set; } = Vector2.down;
+        public Vector2 ViewVector { get; set; } = Vector2.down;
         protected Vector2 LookVector { get; set; } = Vector2.zero;
         protected Vector2 MoveVector { get; set; } = Vector2.zero;
 
-        protected CreatureStateBase(IStateSwitcher stateSwitcher,
-                                    DirectionAnimation animation,
-                                    Movement movement = null,
-                                    AttackBehavior attackBehavior = null)
+        private Action<bool> _trySwithStateByTransition;
+
+        protected CreatureStateBase(IStateSwitcher switcher, DirectionAnimation animation)
         {
-            StateSwitcher = stateSwitcher;
-
             _animation = animation;
-            _movement = movement;
-            _attackBehavior = attackBehavior;
+            StateSwitcher = switcher;
+        }
 
-            _canMove = _movement != null;
-            _canAttack = _attackBehavior != null;
+        public void SetTransition(Action<bool> rule)
+        {
+            _trySwithStateByTransition = null;
+            _trySwithStateByTransition = rule;
+        }
+
+        public void TrySwithStateByTransition()
+        {
+            if(_trySwithStateByTransition != null)
+                _trySwithStateByTransition(IsComplited);
         }
 
         public virtual void Start() 
         {
-            CleanAnimateDirection();
+            _animation.Start();
+
             LookVector = Vector2.zero;
             MoveVector = Vector2.zero;
+
+            if (ExecutionTime > 0f)
+            {
+                IsComplited = false;
+                _executionTimer = ExecutionTime;
+            }
         }
 
-        public virtual void Update()
+        public virtual void Update(Vector2 lookVector, Vector2 moveVector, Vector2 actionPoint = default)
         {
-            if (_canMove && MoveVector.ToMoveDirection() != MoveDirection.None)
-                _movement.Move(MoveVector);
+            SetLookVector(lookVector);
+            SetMoveVector(moveVector);
 
-            if (_canAttack)
-                _attackBehavior.Update();
-        }
-
-        public virtual void Attack(bool isPerformed, int stateTag = 0)
-        {
-            if (_canAttack && isPerformed)
-                _attackBehavior.Attack(ViewVector);
-        }
-
-        public virtual CausedDamage ApplyDamage(CausedDamage damage, Resilience resilience)
-        {
-            return resilience.ApplyDamage(damage);
-        }
-
-        public virtual void LookIn(Vector2 direction)
-        {
-            if (LookVector.Equals(direction))
-                return;
-
-            LookVector = direction;
             ViewVector = CalcViewVector();
             Animate();
-        }
 
-        public virtual void MoveIn(Vector2 direction)
-        {
-            if (_canMove == false)
-                return;
+            if(IsComplited == false)
+            {
+                _executionTimer -= Time.deltaTime;
 
-            if (direction.ToMoveDirection() == MoveDirection.None)
-                OnMoveStoped();
-
-            if (MoveVector.Equals(direction))
-                return;
-
-            MoveVector = direction;
-            ViewVector = CalcViewVector();
-            Animate();
+                if (_executionTimer <= 0f)
+                    IsComplited = true;
+            }
         }
 
         public virtual void Stop() { }
+
+        public virtual void SetLookVector(Vector2 direction)
+        {
+            LookVector = direction;
+        }
+
+        public virtual void SetMoveVector(Vector2 direction)
+        {
+            MoveVector = direction;
+        }
 
         protected virtual Vector2 CalcViewVector()
         {
@@ -105,17 +94,10 @@ namespace Code.Gameplay.State
 
             return ViewVector;
         }
-
-        protected virtual void OnMoveStoped() { }
-
+            
         protected void Animate()
         {
             _animation.Animate(ViewVector.ToMoveDirection());
-        }
-
-        protected void CleanAnimateDirection()
-        {
-            _animation.CleanCurrentDirection();
         }
     }
 }

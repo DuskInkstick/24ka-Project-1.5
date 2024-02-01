@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92067057fe4cf4f4db84f9af79b5ab7d, type: 3}
+  m_Name: attack_series
+  m_EditorClassIdentifier: 
+  AttackPatterns:
+  - {fileID: 11400000, guid: b19e754939958e04790f911d9c018940, type: 2}
+  - {fileID: 11400000, guid: 6177a7e96c620d54184ef95491d62bb8, type: 2}
+  _timeBetweenPatterns: 0.5
+  _selectionMode: 0

@@ -13,6 +13,11 @@ namespace Code.Gameplay.Systems.Animation
             _anim = anim;
         }
 
+        public override void Start()
+        {
+            _currentDirection = MoveDirection.None;
+        }
+
         public override void Animate(MoveDirection direction)
         {
             if (_currentDirection != MoveDirection.None)
@@ -20,11 +25,6 @@ namespace Code.Gameplay.Systems.Animation
 
             _currentDirection = direction;
             Animator.Play(_anim);
-        }
-
-        public override void CleanCurrentDirection()
-        {
-            _currentDirection = MoveDirection.None;
         }
     }
 }
